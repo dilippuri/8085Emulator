@@ -1,17 +1,17 @@
 #include <stdio.h>
 #include"instructions.h"
 
-using Byte = unsigned char;
-using Word = unsigned short;
-using u32 = unsigned int;
+using Byte = unsigned char; // 8-bit memory
+using Word = unsigned short; // 16-bit memory
+using u32 = unsigned int; // 32-bit memory
 
-//this CPU use 64KB of memory
+//64KB memory structure
 struct Mem
 {
     static constexpr u32 MAX_MEM = 1024 * 64;
     Byte Data[MAX_MEM];
 
-    // initalizing bytes to 0x0000
+    // initalize all bytes to 0x0000
     void Init()
     {
         for (u32 i = 0; i < MAX_MEM; i++)
@@ -33,6 +33,7 @@ struct Mem
 
 };
 
+//8085 CPU structure
 struct CPU
 {
     // general purpose registers
@@ -77,6 +78,14 @@ struct CPU
         return Data;
     }
 
+    Byte ReadByte(u32& Cycles, Mem& memory)
+    {
+        Byte Data = memory[PC];
+        PC++;
+        Cycles--;
+        return Data;
+    }
+
     Word ReadWord(u32& Cycles, Mem& memory)
     {
         Word Data = memory[PC];
@@ -107,6 +116,20 @@ struct CPU
             {
                 Word value = ReadWord(Cycles, memory);
                 A = ReadAddress(Cycles, value, memory);
+                break;
+            }
+            case INSTRUCTIONS::LDAX_B:
+            {
+                Word Address = ((B) << 8) | C;
+                A = memory[Address];
+                Cycles--;
+                break;
+            }
+            case INSTRUCTIONS::LDAX_D:
+            {
+                Word Address = ((D) << 8) | E;
+                A = memory[Address];
+                Cycles--;
                 break;
             }
             case INSTRUCTIONS::MOV_A_A:
@@ -157,14 +180,116 @@ struct CPU
             }
             case INSTRUCTIONS::MOV_M_A:
             {
-                Word Address = ((1 & H) << 8) | L;
+                Word Address = ((H) << 8) | L;
                 memory[Address] = A;
                 break;
             }
             case INSTRUCTIONS::MOV_A_M:
             {
-                Word Address = ((1 & H) << 8) | L;
+                Word Address = ((H) << 8) | L;
                 A = memory[Address];
+                break;
+            }
+            case INSTRUCTIONS::MVI_A_DATA:
+            {
+                Byte Data = ReadByte(Cycles, memory);
+                A = Data;
+                break;
+            }
+            case INSTRUCTIONS::MVI_B_DATA:
+            {
+                Byte Data = ReadByte(Cycles, memory);
+                B = Data;
+                break;
+            }
+            case INSTRUCTIONS::MVI_C_DATA:
+            {
+                Byte Data = ReadByte(Cycles, memory);
+                C = Data;
+                break;
+            }
+            case INSTRUCTIONS::MVI_D_DATA:
+            {
+                Byte Data = ReadByte(Cycles, memory);
+                D = Data;
+                break;
+            }
+            case INSTRUCTIONS::MVI_E_DATA:
+            {
+                Byte Data = ReadByte(Cycles, memory);
+                E = Data;
+                break;
+            }
+            case INSTRUCTIONS::MVI_H_DATA:
+            {
+                Byte Data = ReadByte(Cycles, memory);
+                H = Data;
+                break;
+            }
+            case INSTRUCTIONS::MVI_L_DATA:
+            {
+                Byte Data = ReadByte(Cycles, memory);
+                L = Data;
+                break;
+            }
+            case INSTRUCTIONS::MVI_M_DATA:
+            {
+                Word Address = ((H) << 8) | L;
+                memory[Address] = ReadByte(Cycles, memory);
+                break;
+            }
+            case INSTRUCTIONS::LXI_B:
+            {
+                Byte LowerByte = ReadByte(Cycles, memory);
+                C = LowerByte;
+                Byte HigherByte = ReadByte(Cycles, memory);
+                B = HigherByte;
+                break;
+            }
+            case INSTRUCTIONS::LXI_D:
+            {
+                Byte LowerByte = ReadByte(Cycles, memory);
+                E = LowerByte;
+                Byte HigherByte = ReadByte(Cycles, memory);
+                D = HigherByte;
+                break;
+            }
+            case INSTRUCTIONS::LXI_H:
+            {
+                Byte LowerByte = ReadByte(Cycles, memory);
+                L = LowerByte;
+                Byte HigherByte = ReadByte(Cycles, memory);
+                H = HigherByte;
+                break;
+            }
+            case INSTRUCTIONS::LXI_SP:
+            {
+                Byte LowerByte = ReadByte(Cycles, memory);
+                Byte HigherByte = ReadByte(Cycles, memory);
+                SP = ((HigherByte) << 8) | LowerByte;
+                break;
+            }
+            case INSTRUCTIONS::STA_ADDRESS:
+            {
+                Byte LowerByte = ReadByte(Cycles, memory);
+                Byte HigherByte = ReadByte(Cycles, memory);
+                Word Address = ((HigherByte) << 8) | LowerByte;
+                memory[Address] = A;
+                Cycles--;
+                break;
+            }
+            case INSTRUCTIONS::STAX_B:
+            {
+                Word Address = ((B) << 8) | C;
+                memory[Address] = A;
+                Cycles--;
+                break;
+            }
+            case INSTRUCTIONS::STAX_D:
+            {
+                Word Address = ((D) << 8) | E;
+                memory[Address] = A;
+                Cycles--;
                 break;
             }
             default:

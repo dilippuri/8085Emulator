@@ -2,11 +2,11 @@ using Byte = unsigned char;
 using Word = unsigned short;
 using u32 = unsigned int;
 
-
+// 8085 Instruction set
 struct INSTRUCTIONS
 {
-    static Byte constexpr LDA = 0x3A; //Load Accumulator Direct
-    
+
+    //MOV Instructions
     static Byte constexpr MOV_A_B = 0x78;
     static Byte constexpr MOV_A_C = 0x79;
     static Byte constexpr MOV_A_D = 0x7A;
@@ -77,4 +77,36 @@ struct INSTRUCTIONS
     static Byte constexpr MOV_M_E = 0x73;
     static Byte constexpr MOV_M_H = 0x74;
     static Byte constexpr MOV_M_L = 0x75;
+
+    //MVI Instructions
+    static Byte constexpr MVI_A_DATA = 0x3E;
+    static Byte constexpr MVI_B_DATA = 0x06;
+    static Byte constexpr MVI_C_DATA = 0x0E;
+    static Byte constexpr MVI_D_DATA = 0x16;
+    static Byte constexpr MVI_E_DATA = 0x1E;
+    static Byte constexpr MVI_H_DATA = 0x26;
+    static Byte constexpr MVI_L_DATA = 0x2E;
+    static Byte constexpr MVI_M_DATA = 0x36;
+
+    //LXI (Load Register Pair Immediate) Instructions
+    static Byte constexpr LXI_B = 0x01;
+    static Byte constexpr LXI_D = 0x11;
+    static Byte constexpr LXI_H = 0x21;
+    static Byte constexpr LXI_SP = 0x31;
+
+    // STA Instruction
+    static Byte constexpr STA_ADDRESS = 0x32; 
+    static Byte constexpr STAX_B = 0x02;
+    static Byte constexpr STAX_D = 0x12;
+
+    static Byte constexpr LDA = 0x3A; //Load Accumulator Direct
+    
+    static Byte constexpr LDAX_B = 0x0A;
+    static Byte constexpr LDAX_D = 0x1A;
+
+    static Byte constexpr LHLD_ADDRESS = 0x2A;
+
+
+
+    
 };
