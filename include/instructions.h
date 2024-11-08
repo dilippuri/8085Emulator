@@ -94,19 +94,33 @@ struct INSTRUCTIONS
     static Byte constexpr LXI_H = 0x21;
     static Byte constexpr LXI_SP = 0x31;
 
-    // STA Instruction
-    static Byte constexpr STA_ADDRESS = 0x32; 
-    static Byte constexpr STAX_B = 0x02;
-    static Byte constexpr STAX_D = 0x12;
-
-    static Byte constexpr LDA = 0x3A; //Load Accumulator Direct
+    static Byte constexpr LDA_ADDRESS = 0x3A; //Load Accumulator Direct
     
     static Byte constexpr LDAX_B = 0x0A;
     static Byte constexpr LDAX_D = 0x1A;
 
     static Byte constexpr LHLD_ADDRESS = 0x2A;
 
+    // STA Instruction
+    static Byte constexpr STA_ADDRESS = 0x32;
 
+    static Byte constexpr STAX_B = 0x02;
+    static Byte constexpr STAX_D = 0x12;
+
+    static Byte constexpr SHLD_ADDRESS = 0x22;
+
+    // Exchange HL and DE register data into eachother
+    static Byte constexpr XCHG = 0xEB;
+
+    // Load HL into Stack Pointer
+    static Byte constexpr SPHL = 0xF9;
+
+    // Exchange HL with the TOP of Stack
+    static Byte constexpr XTHL = 0xE3;
+
+    // load HL into PC
+    static Byte constexpr PCHL = 0xE9;
 
     
+   
 };
