@@ -102,6 +102,12 @@ struct CPU
         return Data;
     }
 
+    void WriteAddress(u32& Cycles, Word Address, Byte value, Mem& memory)
+    {
+        memory[Address] = value;
+        Cycles--;
+    }
+
 
     
     void Execute(u32 Cycles, Mem& memory)
@@ -112,7 +118,7 @@ struct CPU
 
             switch (Ins)
             {
-            case INSTRUCTIONS::LDA:
+            case INSTRUCTIONS::LDA_ADDRESS:
             {
                 Word value = ReadWord(Cycles, memory);
                 A = ReadAddress(Cycles, value, memory);
@@ -130,6 +136,15 @@ struct CPU
                 Word Address = ((D) << 8) | E;
                 A = memory[Address];
                 Cycles--;
+                break;
+            }
+            case INSTRUCTIONS::LHLD_ADDRESS:
+            {   
+                Byte LowerByte = ReadByte(Cycles, memory);
+                Byte HigherByte = ReadByte(Cycles, memory);
+                Word Address = ((HigherByte) << 8) | LowerByte;
+                L = ReadAddress(Cycles, Address, memory);
+                H = ReadAddress(Cycles, Address+1, memory);
                 break;
             }
             case INSTRUCTIONS::MOV_A_A:
@@ -290,6 +305,43 @@ struct CPU
                 Word Address = ((D) << 8) | E;
                 memory[Address] = A;
                 Cycles--;
+                break;
+            }
+            case INSTRUCTIONS::SHLD_ADDRESS:
+            {   
+                Byte LowerByte = ReadByte(Cycles, memory);
+                Byte HigherByte = ReadByte(Cycles, memory);
+                Word Address = ((HigherByte) << 8) | LowerByte;
+                WriteAddress(Cycles, Address, L, memory);
+                WriteAddress(Cycles, Address+1, H, memory);
+                break;
+            }
+            case INSTRUCTIONS::XCHG:
+            {
+                H = H + D;
+                D = H - D;  H = H - D; // exchanging H and D
+                L = L + E;
+                E = L - E;  L = L - E; // exchanging L and E
+                break;
+            }
+            case INSTRUCTIONS::SPHL:
+            {   
+                Word Address = ((H) << 8) | L;
+                SP = Address;
+                break;
+            }
+            case INSTRUCTIONS::XTHL:
+            {   
+                H = H + memory[SP+1];
+                memory[SP+1] = H - memory[SP+1];  H = H - memory[SP+1]; // exchanging H and TOP
+                L = L + memory[SP];
+                memory[SP] = L - memory[SP];  L = L - memory[SP]; // exchanging L and E
+                break;
+            }
+            case INSTRUCTIONS::PCHL:
+            {   
+                Word Address = ((H) << 8) | L;
+                PC = Address;
                 break;
             }
             default:
