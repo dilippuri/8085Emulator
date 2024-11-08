@@ -17,10 +17,10 @@ protected:
     }
 };
 
-TEST_F(EmulatorTest, LDA) {
+TEST_F(EmulatorTest, LDA_ADDRESS) {
     cpu.Reset(mem);
     mem[0x000A] = 0x0F;
-    mem[0x0000] = INSTRUCTIONS::LDA;
+    mem[0x0000] = INSTRUCTIONS::LDA_ADDRESS;
     mem[0x0001] = 0x0A;
     mem[0x0002] = 0x00;
     cpu.Execute(4, mem);
@@ -244,6 +244,18 @@ TEST_F(EmulatorTest, STAX_D) {
     EXPECT_EQ(mem[0x200F], 0x1F);
 }
 
+TEST_F(EmulatorTest, SHLD_Address) {
+    cpu.Reset(mem);
+    cpu.L = 0x1F;
+    cpu.H = 0x20;
+    mem[0x0000] = INSTRUCTIONS::SHLD_ADDRESS;
+    mem[0x0001] = 0x0F;
+    mem[0x0002] = 0x20;
+    cpu.Execute(5, mem);
+    EXPECT_EQ(mem[0x200F], 0x1F);
+    EXPECT_EQ(mem[0x2010], 0x20);
+}
+
 TEST_F(EmulatorTest, LDAX_B) {
     cpu.Reset(mem);
     cpu.B = 0x20;
@@ -262,4 +274,63 @@ TEST_F(EmulatorTest, LDAX_D) {
     mem[0x0000] = INSTRUCTIONS::LDAX_D;
     cpu.Execute(2, mem);
     EXPECT_EQ(cpu.A, 0x1F);
+}
+
+TEST_F(EmulatorTest, LHLD_Address) {
+    cpu.Reset(mem);
+    mem[0x200F] = 0x1F;
+    mem[0x2010] = 0x20;
+    mem[0x0000] = INSTRUCTIONS::LHLD_ADDRESS;
+    mem[0x0001] = 0x0F;
+    mem[0x0002] = 0x20;
+    cpu.Execute(5, mem);
+    EXPECT_EQ(cpu.L, 0x1F);
+    EXPECT_EQ(cpu.H, 0x20);
+}
+
+TEST_F(EmulatorTest, XCHG) {
+    cpu.Reset(mem);
+    cpu.H = 0x30;
+    cpu.L = 0x0A;
+    cpu.D = 0x40;
+    cpu.E = 0x00;
+    mem[0x0000] = INSTRUCTIONS::XCHG;
+    cpu.Execute(1, mem);
+    EXPECT_EQ(cpu.L, 0x00);
+    EXPECT_EQ(cpu.H, 0x40);
+    EXPECT_EQ(cpu.E, 0x0A);
+    EXPECT_EQ(cpu.D, 0x30);
+}
+
+TEST_F(EmulatorTest, SPHL) {
+    cpu.Reset(mem);
+    cpu.H = 0x30;
+    cpu.L = 0x0A;
+    mem[0x0000] = INSTRUCTIONS::SPHL;
+    cpu.Execute(1, mem);
+    EXPECT_EQ(cpu.SP, 0x300A);
+}
+
+TEST_F(EmulatorTest, XTHL) {
+    cpu.Reset(mem);
+    cpu.SP = 0x8000;
+    cpu.H = 0x30;
+    cpu.L = 0x0A;
+    mem[0x8000] = 0x10;
+    mem[0x8001] = 0x08;
+    mem[0x0000] = INSTRUCTIONS::XTHL;
+    cpu.Execute(1, mem);
+    EXPECT_EQ(cpu.L, 0x10);
+    EXPECT_EQ(cpu.H, 0x08);
+    EXPECT_EQ(mem[cpu.SP], 0x0A);
+    EXPECT_EQ(mem[cpu.SP+1], 0x30);
+}
+
+TEST_F(EmulatorTest, PCHL) {
+    cpu.Reset(mem);
+    cpu.H = 0x30;
+    cpu.L = 0x0A;
+    mem[0x0000] = INSTRUCTIONS::PCHL;
+    cpu.Execute(1, mem);
+    EXPECT_EQ(cpu.PC, 0x300A);
 }
