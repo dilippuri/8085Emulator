@@ -1,10 +1,11 @@
-using Byte = unsigned char;
-using Word = unsigned short;
-using u32 = unsigned int;
+#pragma once
+
+#include<common.h>
 
 // 8085 Instruction set
 struct INSTRUCTIONS
 {
+// DATA TRANSFER INSTRUCTIONS
 
     //MOV Instructions
     static Byte constexpr MOV_A_B = 0x78;
@@ -96,10 +97,10 @@ struct INSTRUCTIONS
 
     static Byte constexpr LDA_ADDRESS = 0x3A; //Load Accumulator Direct
     
-    static Byte constexpr LDAX_B = 0x0A;
-    static Byte constexpr LDAX_D = 0x1A;
+    static Byte constexpr LDAX_B = 0x0A; // Load Data of Address pointing by the BC register in Accumulator
+    static Byte constexpr LDAX_D = 0x1A; // Load Data of Address pointing by the DE register in Accumulator
 
-    static Byte constexpr LHLD_ADDRESS = 0x2A;
+    static Byte constexpr LHLD_ADDRESS = 0x2A; 
 
     // STA Instruction
     static Byte constexpr STA_ADDRESS = 0x32;
@@ -121,6 +122,36 @@ struct INSTRUCTIONS
     // load HL into PC
     static Byte constexpr PCHL = 0xE9;
 
-    
+    // PUSH Instructions
+    static Byte constexpr PUSH_B = 0xC5;
+    static Byte constexpr PUSH_D = 0xD5;
+    static Byte constexpr PUSH_H = 0xE5;
+    static Byte constexpr PUSH_PSW = 0xF5;
+
+    // POP Instructions
+    static Byte constexpr POP_B = 0xC1;
+    static Byte constexpr POP_D = 0xD1;
+    static Byte constexpr POP_H = 0xE1;
+    static Byte constexpr POP_PSW = 0xF1;
+
+    // OUT Instruction
+    static Byte constexpr OUT = 0xD3;
+
+    // IN Instruction
+    static Byte constexpr IN = 0xDB;
+
+
+// LOGICAL INSTRUCTIONS
    
+    // CMP Instruction
+    static Byte constexpr CMP_A = 0xBF;
+    static Byte constexpr CMP_B = 0xB8;
+    static Byte constexpr CMP_C = 0xB9;
+    static Byte constexpr CMP_D = 0xBA;
+    static Byte constexpr CMP_E = 0xBB;
+    static Byte constexpr CMP_H = 0xBC;
+    static Byte constexpr CMP_L = 0xBD;
+    static Byte constexpr CMP_M = 0xBE; // Compare with memory location pointing by the HL register pair
+
+    static Byte constexpr CPI_DATA = 0xFE;
 };

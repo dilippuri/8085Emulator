@@ -1,9 +1,9 @@
-#include <stdio.h>
-#include"instructions.h"
+#pragma once
 
-using Byte = unsigned char; // 8-bit memory
-using Word = unsigned short; // 16-bit memory
-using u32 = unsigned int; // 32-bit memory
+#include <stdio.h>
+#include<common.h>
+#include<instructions.h>
+
 
 //64KB memory structure
 struct Mem
@@ -35,7 +35,7 @@ struct Mem
 
 //8085 CPU structure
 struct CPU
-{
+{   
     // general purpose registers
     Byte B, C, D, E, H, L;
 
@@ -56,9 +56,32 @@ struct CPU
         Byte AC : 1; // auxillary flag
         Byte P : 1; // parity flag
         Byte CY : 1; // carry flag
+
+        Byte getFlagRegister()
+        {
+            return (S << 7) | (Z << 6) | (AC << 4) | (P << 2) | (CY);
+        }
+
+        void setFlagsFromHex(Byte flagByte)
+        {
+            S = (flagByte >> 7) & 0x1;   // Bit 7: Sign Flag
+            Z = (flagByte >> 6) & 0x1;   // Bit 6: Zero Flag
+            AC = (flagByte >> 4) & 0x1;  // Bit 4: Auxiliary Carry Flag
+            P = (flagByte >> 2) & 0x1;   // Bit 2: Parity Flag
+            CY = (flagByte >> 0) & 0x1;  // Bit 0: Carry Flag
+        }
     } flag;
+
+    // OUTPUTPORT structure for CPU
+    struct PORT
+    {
+        Byte PortAddress; // output port address
+        Byte Data; // value of output port
+        Byte IO : 1; // weather the take INPUT = 0 or OUTPUT = 1 (a bit value)
+        Byte WR : 1; // weather port is READING = 0 or WRITING = 1 (a bit value)
+    } port;
     
-    
+    // Rest the CPU.
     void Reset( Mem& memory)
     {
         B, C, D, E, H, L = 0;
@@ -68,8 +91,11 @@ struct CPU
         A = 0;
         flag.S = flag.Z = flag.AC = flag.P = flag.CY = 0;
         memory.Init();
+        port.Data = port.PortAddress = 0;
+        port.IO = port.WR = 0;
     }
 
+    // Fetch the opcode from instructions.
     Byte OpCodeFetch(u32& Cycles, Mem& memory )
     {
         Byte Data = memory[PC];
@@ -78,6 +104,7 @@ struct CPU
         return Data;
     }
 
+    // Read a Byte (8-bit) from a memory
     Byte ReadByte(u32& Cycles, Mem& memory)
     {
         Byte Data = memory[PC];
@@ -86,6 +113,7 @@ struct CPU
         return Data;
     }
 
+    // Read a Word (16-bit) from a memory
     Word ReadWord(u32& Cycles, Mem& memory)
     {
         Word Data = memory[PC];
@@ -95,6 +123,7 @@ struct CPU
         return Data;
     }
 
+    // Read a Byte from the specify memory Address
     Byte ReadAddress(u32& Cycles, Word Address, Mem& memory)
     {
         Byte Data = memory[Address];
@@ -102,11 +131,108 @@ struct CPU
         return Data;
     }
 
+    // Write A Byte at the specify memory Address
     void WriteAddress(u32& Cycles, Word Address, Byte value, Mem& memory)
     {
         memory[Address] = value;
         Cycles--;
     }
+
+    // Push a Byte in the Stack at an address specify by the SP (Stack Poniter) and Decrease the SP.
+    void StackPUSH(u32& Cycles, Byte value, Mem& memory)
+    {   
+        SP--;
+        memory[SP] = value;
+        Cycles--;
+    }
+
+    // POP a Byte in the Stack at an address specify by the SP (Stack Poniter) and Increase the SP.
+    Byte StackPOP(u32& Cycles, Mem& memory)
+    {   
+        Byte Data = memory[SP];
+        memory[SP] = 0x00;
+        SP++;
+        Cycles--;
+        return Data;
+    }
+
+    // check the even number of 1's in the given 'value'
+    bool CheckOns(Byte value)
+    {
+        int count = 0;
+        while(value)
+        {
+            count += (value & 0x01);
+            value >>=1; //value = value >> 1
+        }
+        return (count % 2 == 0);
+    }
+
+    // Set Zero Flag Register ( if value is 0 , then ZERO_FLAG : 1 )
+    void SetZEROFlagRegisters(Byte value)
+    {
+        if(value == 0) 
+        {
+            flag.Z = 1;
+        }
+        else
+        {
+            flag.Z = 0;
+        }  
+    }
+
+    // Set Sign Flag Register ( NEGATIVE : 1 , POSITIVE : 0 )
+    void SetSIGNFlagRegister(Byte value)  
+    {
+        if( value & 0x80) 
+        {
+            flag.S = 1;
+        }
+        else
+        {
+            flag.S = 0;
+        }
+    }
+
+    // Set Parity Flag Register ( if no. of 1's are EVEN, then PARITY_FLAG : 1 )
+    void SetPARITYFlagRegister(Byte value)
+    {
+        if(CheckOns(value))  
+        {
+            flag.P = 1;
+        }
+        else
+        {
+            flag.P = 0;
+        }
+    }
+
+    // Set Carry Flag Register ( if CARRY or BORROW occur, then CARRY_FLAG : 1 )
+    void SetCARRYFlagRegister(Byte value, bool isAddition)
+    {
+        if(isAddition)
+        {
+            Word result = A + value + flag.CY;
+            flag.CY = (result > 0xFF);
+        }
+        else
+        {
+            flag.CY = (A < value + flag.CY);
+        }
+    }
+
+    void SetAUXILLAYCARRYFlagRegister(Byte firstOprand, Byte secondOprand, bool isAddition)
+    {
+        if(isAddition)
+        {
+            flag.AC = ( (firstOprand & 0x0F) + (secondOprand & 0x0F) ) > 0x0F;
+        }
+        else
+        {
+            flag.AC = ( (firstOprand & 0x0F) < (secondOprand & 0x0F) );
+        }
+    }
+
 
 
     
@@ -181,8 +307,7 @@ struct CPU
             {
                 A = L;
                 break;
-            }
-            
+            }          
             case INSTRUCTIONS::MOV_B_C:
             {
                 B = C;
@@ -342,6 +467,173 @@ struct CPU
             {   
                 Word Address = ((H) << 8) | L;
                 PC = Address;
+                break;
+            }
+            case INSTRUCTIONS::PUSH_B:
+            {
+                StackPUSH(Cycles, B, memory);
+                StackPUSH(Cycles, C, memory);
+                Cycles--;
+                break;
+            }
+            case INSTRUCTIONS::PUSH_D:
+            {
+                StackPUSH(Cycles, D, memory);
+                StackPUSH(Cycles, E, memory);
+                Cycles--;
+                break;
+            }
+            case INSTRUCTIONS::PUSH_H:
+            {
+                StackPUSH(Cycles, H, memory);
+                StackPUSH(Cycles, L, memory);
+                Cycles--;
+                break;
+            }
+            case INSTRUCTIONS::PUSH_PSW:
+            {
+                StackPUSH(Cycles, A, memory);
+                StackPUSH(Cycles, flag.getFlagRegister(), memory);
+                Cycles--;
+                break;
+            }
+            case INSTRUCTIONS::POP_B:
+            {
+                C = StackPOP(Cycles, memory);
+                B = StackPOP(Cycles, memory);
+                break;
+            }
+            case INSTRUCTIONS::POP_D:
+            {
+                E = StackPOP(Cycles, memory);
+                D = StackPOP(Cycles, memory);
+                break;
+            }
+            case INSTRUCTIONS::POP_H:
+            {
+                L = StackPOP(Cycles, memory);
+                H = StackPOP(Cycles, memory);
+                break;
+            }
+            case INSTRUCTIONS::POP_PSW:
+            {
+                Byte FlagValue = StackPOP(Cycles, memory);
+                flag.setFlagsFromHex(FlagValue);
+                A = StackPOP(Cycles, memory);
+                break;
+            }
+            case INSTRUCTIONS::OUT:
+            {
+                Byte Address = ReadByte(Cycles, memory);
+                port.PortAddress = Address;
+                port.Data = A;
+                port.IO = 1;
+                port.WR = 1;
+                Cycles--;
+                break;
+            }
+            case INSTRUCTIONS::IN:
+            {
+                Byte Address = ReadByte(Cycles, memory);
+                port.PortAddress = Address;
+                A = port.Data;
+                port.IO = 0;
+                port.WR = 0;
+                Cycles--;
+                break;
+            }
+            case INSTRUCTIONS::CMP_A:
+            {
+                Byte Result = A - A;
+                SetSIGNFlagRegister(Result);
+                SetZEROFlagRegisters(Result);
+                SetAUXILLAYCARRYFlagRegister( A, A, 0);
+                SetPARITYFlagRegister(Result);
+                SetCARRYFlagRegister(Result, 0);
+                break;
+            }
+            case INSTRUCTIONS::CMP_B:
+            {
+                Byte Result = A - B;
+                SetSIGNFlagRegister(Result);
+                SetZEROFlagRegisters(Result);
+                SetAUXILLAYCARRYFlagRegister( A, B, 0);
+                SetPARITYFlagRegister(Result);
+                SetCARRYFlagRegister(Result, 0);
+                break;
+            }
+            case INSTRUCTIONS::CMP_C:
+            {
+                Byte Result = A - C;
+                SetSIGNFlagRegister(Result);
+                SetZEROFlagRegisters(Result);
+                SetAUXILLAYCARRYFlagRegister( A, C, 0);
+                SetPARITYFlagRegister(Result);
+                SetCARRYFlagRegister(Result, 0);
+                break;
+            }
+            case INSTRUCTIONS::CMP_D:
+            {
+                Byte Result = A - D;
+                printf("VASHU HERE %X\n", Result);
+                SetSIGNFlagRegister(Result);
+                SetZEROFlagRegisters(Result);
+                SetAUXILLAYCARRYFlagRegister( A, D, 0);
+                SetPARITYFlagRegister(Result);
+                SetCARRYFlagRegister(Result, 0);
+                break;
+            }
+            case INSTRUCTIONS::CMP_E:
+            {
+                Byte Result = A - E;
+                SetSIGNFlagRegister(Result);
+                SetZEROFlagRegisters(Result);
+                SetAUXILLAYCARRYFlagRegister( A, E, 0);
+                SetPARITYFlagRegister(Result);
+                SetCARRYFlagRegister(Result, 0);
+                break;
+            }
+            case INSTRUCTIONS::CMP_H:
+            {
+                Byte Result = A - H;
+                SetSIGNFlagRegister(Result);
+                SetZEROFlagRegisters(Result);
+                SetAUXILLAYCARRYFlagRegister( A, H, 0);
+                SetPARITYFlagRegister(Result);
+                SetCARRYFlagRegister(Result, 0);
+                break;
+            }
+            case INSTRUCTIONS::CMP_L:
+            {
+                Byte Result = A - L;
+                SetSIGNFlagRegister(Result);
+                SetZEROFlagRegisters(Result);
+                SetAUXILLAYCARRYFlagRegister( A, L, 0);
+                SetPARITYFlagRegister(Result);
+                SetCARRYFlagRegister(Result, 0);
+                break;
+            }
+            case INSTRUCTIONS::CMP_M:
+            {   
+                Word Address = ((H) << 8) | L;
+                Byte Data = memory[Address];
+                Byte Result = A - Data;
+                SetSIGNFlagRegister(Result);
+                SetZEROFlagRegisters(Result);
+                SetAUXILLAYCARRYFlagRegister( A, Data, 0);
+                SetPARITYFlagRegister(Result);
+                SetCARRYFlagRegister(Result, 0);
+                break;
+            }
+            case INSTRUCTIONS::CPI_DATA:
+            {   
+                Byte Data = ReadByte(Cycles, memory);
+                Byte Result = A - Data;
+                SetSIGNFlagRegister(Result);
+                SetZEROFlagRegisters(Result);
+                SetAUXILLAYCARRYFlagRegister( A, Data, 0);
+                SetPARITYFlagRegister(Result);
+                SetCARRYFlagRegister(Result, 0);
                 break;
             }
             default:
