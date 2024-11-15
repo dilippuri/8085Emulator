@@ -334,3 +334,250 @@ TEST_F(EmulatorTest, PCHL) {
     cpu.Execute(1, mem);
     EXPECT_EQ(cpu.PC, 0x300A);
 }
+
+TEST_F(EmulatorTest, PUSH_B) {
+    cpu.Reset(mem);
+    cpu.B = 0x30;
+    cpu.C = 0x0A;
+    mem[0x0000] = INSTRUCTIONS::PUSH_B;
+    cpu.Execute(4, mem);
+    EXPECT_EQ(mem[0xFFFE], 0x30);
+    EXPECT_EQ(mem[0xFFFD], 0x0A);
+}
+
+TEST_F(EmulatorTest, PUSH_D) {
+    cpu.Reset(mem);
+    cpu.D = 0x30;
+    cpu.E = 0x0A;
+    mem[0x0000] = INSTRUCTIONS::PUSH_D;
+    cpu.Execute(4, mem);
+    EXPECT_EQ(mem[0xFFFE], 0x30);
+    EXPECT_EQ(mem[0xFFFD], 0x0A);
+}
+
+TEST_F(EmulatorTest, PUSH_H) {
+    cpu.Reset(mem);
+    cpu.H = 0x30;
+    cpu.L = 0x0A;
+    mem[0x0000] = INSTRUCTIONS::PUSH_H;
+    cpu.Execute(4, mem);
+    EXPECT_EQ(mem[0xFFFE], 0x30);
+    EXPECT_EQ(mem[0xFFFD], 0x0A);
+}
+
+TEST_F(EmulatorTest, PUSH_PSW) {
+    cpu.Reset(mem);
+    cpu.flag.S = 0x01;
+    cpu.flag.Z = 0x00;
+    cpu.flag.AC = 0x00;
+    cpu.flag.P = 0x00;
+    cpu.flag.CY = 0x01;
+    // [1000 0001] = 0x81 = 129
+    cpu.A = 0x0A;
+    mem[0x0000] = INSTRUCTIONS::PUSH_PSW;
+    cpu.Execute(4, mem);
+    EXPECT_EQ(mem[0xFFFE], 0x0A);
+    EXPECT_EQ(mem[0xFFFD], 0x81);
+}
+
+TEST_F(EmulatorTest, POP_B) {
+    cpu.Reset(mem);
+    mem[0xFFFD] = 0x30;
+    mem[0xFFFE] = 0x0A;
+    cpu.SP = 0xFFFD;
+    mem[0x0000] = INSTRUCTIONS::POP_B;
+    cpu.Execute(3, mem);
+    EXPECT_EQ(cpu.C, 0x30);
+    EXPECT_EQ(cpu.B, 0x0A);
+}
+
+TEST_F(EmulatorTest, POP_D) {
+    cpu.Reset(mem);
+    mem[0xFFFD] = 0x30;
+    mem[0xFFFE] = 0x0A;
+    cpu.SP = 0xFFFD;
+    mem[0x0000] = INSTRUCTIONS::POP_D;
+    cpu.Execute(3, mem);
+    EXPECT_EQ(cpu.E, 0x30);
+    EXPECT_EQ(cpu.D, 0x0A);
+}
+
+TEST_F(EmulatorTest, POP_H) {
+    cpu.Reset(mem);
+    mem[0xFFFD] = 0x30;
+    mem[0xFFFE] = 0x0A;
+    cpu.SP = 0xFFFD;
+    mem[0x0000] = INSTRUCTIONS::POP_H;
+    cpu.Execute(3, mem);
+    EXPECT_EQ(cpu.L, 0x30);
+    EXPECT_EQ(cpu.H, 0x0A);
+}
+
+TEST_F(EmulatorTest, POP_PSW) {
+    cpu.Reset(mem);
+    mem[0xFFFE] = 0x0A;
+    // [1000 0001] = 0x81 = 129
+    mem[0xFFFD] = 0x81;
+    cpu.SP = 0xFFFD;
+    mem[0x0000] = INSTRUCTIONS::POP_PSW;
+    cpu.Execute(3, mem);
+    EXPECT_EQ(cpu.flag.S, 0x01);
+    EXPECT_EQ(cpu.flag.Z, 0x00);
+    EXPECT_EQ(cpu.flag.AC, 0x00);
+    EXPECT_EQ(cpu.flag.P, 0x00);
+    EXPECT_EQ(cpu.flag.CY, 0x01);
+    EXPECT_EQ(cpu.A, 0x0A);
+}
+
+TEST_F(EmulatorTest, OUT_PORTADDRESS) {
+    cpu.Reset(mem);
+    mem[0x0000] = INSTRUCTIONS::MVI_A_DATA;
+    mem[0x0001] = 0x01;
+    mem[0x0002] = INSTRUCTIONS::OUT;
+    mem[0x0003] = 0xFF;
+    cpu.Execute(5, mem);
+    EXPECT_EQ(cpu.A, 0x01);
+    EXPECT_EQ(cpu.port.Data, 0x01);
+    EXPECT_EQ(cpu.port.PortAddress, 0xFF);
+    EXPECT_EQ(cpu.port.IO, 0x01);
+    EXPECT_EQ(cpu.port.WR, 0x01);
+}
+
+TEST_F(EmulatorTest, IN_PORTADDRESS) {
+    cpu.Reset(mem);
+    cpu.port.Data = 0x05;
+    mem[0x0000] = INSTRUCTIONS::IN;
+    mem[0x0001] = 0xFF;
+    cpu.Execute(3, mem);
+    EXPECT_EQ(cpu.A, 0x05);
+    EXPECT_EQ(cpu.port.Data, 0x05);
+    EXPECT_EQ(cpu.port.PortAddress, 0xFF);
+    EXPECT_EQ(cpu.port.IO, 0x00);
+    EXPECT_EQ(cpu.port.WR, 0x00);
+}
+
+TEST_F(EmulatorTest, CMP_A) {
+    cpu.Reset(mem);
+    cpu.A = 0x3F;
+    mem[0x0000] = INSTRUCTIONS::CMP_A;
+    cpu.Execute(1, mem);
+    EXPECT_EQ(cpu.A, 0x3F);
+    EXPECT_EQ(cpu.flag.S, 0x00);
+    EXPECT_EQ(cpu.flag.Z, 0x01);
+    EXPECT_EQ(cpu.flag.AC, 0x00);
+    EXPECT_EQ(cpu.flag.P, 0x01);
+    EXPECT_EQ(cpu.flag.CY, 0x00);
+}
+
+TEST_F(EmulatorTest, CMP_B) {
+    cpu.Reset(mem);
+    cpu.A = 0x05;
+    cpu.B = 0x0A;
+    mem[0x0000] = INSTRUCTIONS::CMP_B;
+    cpu.Execute(1, mem);
+    EXPECT_EQ(cpu.B, 0x0A);
+    EXPECT_EQ(cpu.flag.S, 0x01);
+    EXPECT_EQ(cpu.flag.Z, 0x00);
+    EXPECT_EQ(cpu.flag.AC, 0x01);
+    EXPECT_EQ(cpu.flag.P, 0x00);
+    EXPECT_EQ(cpu.flag.CY, 0x01);
+}
+
+TEST_F(EmulatorTest, CMP_C) {
+    cpu.Reset(mem);
+    cpu.A = 0x3C;
+    cpu.C = 0xC2;
+    mem[0x0000] = INSTRUCTIONS::CMP_C;
+    cpu.Execute(1, mem);
+    EXPECT_EQ(cpu.C, 0xC2);
+    EXPECT_EQ(cpu.flag.S, 0x00);
+    EXPECT_EQ(cpu.flag.Z, 0x00);
+    EXPECT_EQ(cpu.flag.AC, 0x00);
+    EXPECT_EQ(cpu.flag.P, 0x00);
+    EXPECT_EQ(cpu.flag.CY, 0x01);
+}
+
+TEST_F(EmulatorTest, CMP_D) {
+    cpu.Reset(mem);
+    cpu.A = 0x7F;
+    cpu.D = 0x81;
+    mem[0x0000] = INSTRUCTIONS::CMP_D;
+    cpu.Execute(1, mem);
+    EXPECT_EQ(cpu.D, 0x81);
+    EXPECT_EQ(cpu.flag.S, 0x01);
+    EXPECT_EQ(cpu.flag.Z, 0x00);
+    EXPECT_EQ(cpu.flag.AC, 0x00);
+    EXPECT_EQ(cpu.flag.P, 0x00);
+    EXPECT_EQ(cpu.flag.CY, 0x01);
+}
+
+TEST_F(EmulatorTest, CMP_E) {
+    cpu.Reset(mem);
+    cpu.A = 0x0D;
+    cpu.E = 0x45;
+    mem[0x0000] = INSTRUCTIONS::CMP_E;
+    cpu.Execute(1, mem);
+    EXPECT_EQ(cpu.E, 0x45);
+    EXPECT_EQ(cpu.flag.S, 0x01);
+    EXPECT_EQ(cpu.flag.Z, 0x00);
+    EXPECT_EQ(cpu.flag.AC, 0x00);
+    EXPECT_EQ(cpu.flag.P, 0x00);
+    EXPECT_EQ(cpu.flag.CY, 0x01);
+}
+
+TEST_F(EmulatorTest, CMP_H) {
+    cpu.Reset(mem);
+    cpu.A = 0xCD;
+    cpu.H = 0xFE;
+    mem[0x0000] = INSTRUCTIONS::CMP_H;
+    cpu.Execute(1, mem);
+    EXPECT_EQ(cpu.H, 0xFE);
+    EXPECT_EQ(cpu.flag.S, 0x01);
+    EXPECT_EQ(cpu.flag.Z, 0x00);
+    EXPECT_EQ(cpu.flag.AC, 0x01);
+    EXPECT_EQ(cpu.flag.P, 0x01);
+    EXPECT_EQ(cpu.flag.CY, 0x01);
+}
+
+TEST_F(EmulatorTest, CMP_L) {
+    cpu.Reset(mem);
+    cpu.A = 0x00;
+    cpu.L = 0xFF;
+    mem[0x0000] = INSTRUCTIONS::CMP_L;
+    cpu.Execute(1, mem);
+    EXPECT_EQ(cpu.L, 0xFF);
+    EXPECT_EQ(cpu.flag.S, 0x00);
+    EXPECT_EQ(cpu.flag.Z, 0x00);
+    EXPECT_EQ(cpu.flag.AC, 0x01);
+    EXPECT_EQ(cpu.flag.P, 0x00);
+    EXPECT_EQ(cpu.flag.CY, 0x01);
+}
+
+TEST_F(EmulatorTest, CMP_M) {
+    cpu.Reset(mem);
+    cpu.A = 0xCD;
+    cpu.H = 0x20;
+    cpu.L = 0x10;
+    mem[0x2010] = 0xFE;
+    mem[0x0000] = INSTRUCTIONS::CMP_M;
+    cpu.Execute(1, mem);
+    EXPECT_EQ(mem[0x2010], 0xFE);
+    EXPECT_EQ(cpu.flag.S, 0x01);
+    EXPECT_EQ(cpu.flag.Z, 0x00);
+    EXPECT_EQ(cpu.flag.AC, 0x01);
+    EXPECT_EQ(cpu.flag.P, 0x01);
+    EXPECT_EQ(cpu.flag.CY, 0x01);
+}
+
+TEST_F(EmulatorTest, CPI_DATA) {
+    cpu.Reset(mem);
+    cpu.A = 0xCD;
+    mem[0x0000] = INSTRUCTIONS::CPI_DATA;
+    mem[0x0001] = 0xFE;
+    cpu.Execute(2, mem);
+    EXPECT_EQ(cpu.flag.S, 0x01);
+    EXPECT_EQ(cpu.flag.Z, 0x00);
+    EXPECT_EQ(cpu.flag.AC, 0x01);
+    EXPECT_EQ(cpu.flag.P, 0x01);
+    EXPECT_EQ(cpu.flag.CY, 0x01);
+}
