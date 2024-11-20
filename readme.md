@@ -16,9 +16,9 @@ This project aims to emulate the 8085 microprocessor and implement all its instr
 | SHLD        | Store H-L pair directly.               | ✅ Done    |
 | XCHG        | Exchange H-L with D-E.                 | ✅ Done    |
 | PUSH        | Push register pair onto the stack.     | ✅ Done    |
-| POP         | Pop register pair from the stack.      | ✅ Pending |
+| POP         | Pop register pair from the stack.      | ✅ Done |
 | OUT         | Output to port.                        | ✅ Done    |
-| IN          | Input from port.                       | ✅ Pending |
+| IN          | Input from port.                       | ✅ Done |
 
 ## Arithmetic Instructions
 
@@ -65,7 +65,7 @@ This project aims to emulate the 8085 microprocessor and implement all its instr
 | Instruction | Description                                     | Status     |
 |-------------|-------------------------------------------------|------------|
 | PUSH        | Push register pair onto the stack.             | ✅ Done    |
-| POP         | Pop register pair from the stack.              | ✅ Pending |
+| POP         | Pop register pair from the stack.              | ✅ Done |
 | HLT         | Halt the program.                              | 🔲 Pending |
 | NOP         | No operation.                                  | 🔲 Pending |
 | DI          | Disable interrupts.                            | 🔲 Pending |
