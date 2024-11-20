@@ -581,3 +581,15 @@ TEST_F(EmulatorTest, CPI_DATA) {
     EXPECT_EQ(cpu.flag.P, 0x01);
     EXPECT_EQ(cpu.flag.CY, 0x01);
 }
+
+TEST_F(EmulatorTest, ANA_A) {
+    cpu.Reset(mem);
+    cpu.A = 0x00;
+    mem[0x0000] = INSTRUCTIONS::ANA_A;
+    cpu.Execute(1, mem);
+    EXPECT_EQ(cpu.flag.S, 0x00);
+    EXPECT_EQ(cpu.flag.Z, 0x01);
+    EXPECT_EQ(cpu.flag.AC, 0x00);
+    EXPECT_EQ(cpu.flag.P, 0x01);
+    EXPECT_EQ(cpu.flag.CY, 0x00);
+}
