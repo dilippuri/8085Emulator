@@ -233,7 +233,15 @@ struct CPU
         }
     }
 
-
+    void ANA(Byte value) {
+        // Perform the AND operation
+        A = A & value;
+        SetSIGNFlagRegister(A);
+        SetZEROFlagRegisters(A);
+        SetAUXILLAYCARRYFlagRegister( A, value, 0);
+        SetPARITYFlagRegister(A);
+        SetCARRYFlagRegister(0, 0);
+    }
 
     
     void Execute(u32 Cycles, Mem& memory)
@@ -634,6 +642,41 @@ struct CPU
                 SetAUXILLAYCARRYFlagRegister( A, Data, 0);
                 SetPARITYFlagRegister(Result);
                 SetCARRYFlagRegister(Result, 0);
+                break;
+            }
+            case INSTRUCTIONS::ANA_A:
+            {
+                ANA(A);
+                break;
+            }
+            case INSTRUCTIONS::ANA_B:
+            {
+                ANA(B);
+                break;
+            }
+            case INSTRUCTIONS::ANA_C:
+            {
+                ANA(C);
+                break;
+            }
+            case INSTRUCTIONS::ANA_D:
+            {
+                ANA(D);
+                break;
+            }
+            case INSTRUCTIONS::ANA_E:
+            {
+                ANA(E);
+                break;
+            }
+            case INSTRUCTIONS::ANA_H:
+            {
+                ANA(H);
+                break;
+            }
+            case INSTRUCTIONS::ANA_L:
+            {
+                ANA(L);
                 break;
             }
             default:
