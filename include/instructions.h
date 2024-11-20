@@ -154,4 +154,15 @@ struct INSTRUCTIONS
     static Byte constexpr CMP_M = 0xBE; // Compare with memory location pointing by the HL register pair
 
     static Byte constexpr CPI_DATA = 0xFE;
+
+    // AND Instruction
+    static Byte constexpr ANA_A = 0xA7;
+    static Byte constexpr ANA_B = 0xA0;
+    static Byte constexpr ANA_C = 0xA1;
+    static Byte constexpr ANA_D = 0xA2;
+    static Byte constexpr ANA_E = 0xA3;
+    static Byte constexpr ANA_H = 0xA4;
+    static Byte constexpr ANA_L = 0xA5;
+    static Byte constexpr ANA_M = 0xA6; // AND with memory location pointing by the HL register pair
+
 };
