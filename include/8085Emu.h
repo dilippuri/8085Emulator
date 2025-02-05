@@ -679,6 +679,182 @@ struct CPU
                 ANA(L);
                 break;
             }
+            case INSTRUCTIONS::DCR_A:
+            {
+                Byte oldValue = A;
+                A--;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                break;
+            }
+            case INSTRUCTIONS::DCR_B:
+            {
+                Byte oldValue = B;
+                B--;
+                SetSIGNFlagRegister(B);
+                SetZEROFlagRegisters(B);
+                SetAUXILLAYCARRYFlagRegister( B, oldValue, 0);
+                SetPARITYFlagRegister(B);
+                break;
+            }
+            case INSTRUCTIONS::DCR_C:
+            {
+                Byte oldValue = C;
+                C--;
+                SetSIGNFlagRegister(C);
+                SetZEROFlagRegisters(C);
+                SetAUXILLAYCARRYFlagRegister( C, oldValue, 0);
+                SetPARITYFlagRegister(C);
+                break;
+            }
+            case INSTRUCTIONS::DCR_D:
+            {
+                Byte oldValue = D;
+                D--;
+                SetSIGNFlagRegister(D);
+                SetZEROFlagRegisters(D);
+                SetAUXILLAYCARRYFlagRegister( D, oldValue, 0);
+                SetPARITYFlagRegister(D);
+                break;
+            }
+            case INSTRUCTIONS::DCR_E:
+            {
+                Byte oldValue = E;
+                E--;
+                SetSIGNFlagRegister(E);
+                SetZEROFlagRegisters(E);
+                SetAUXILLAYCARRYFlagRegister( E, oldValue, 0);
+                SetPARITYFlagRegister(E);
+                break;
+            }
+            case INSTRUCTIONS::DCR_H:
+            {
+                Byte oldValue = H;
+                H--;
+                SetSIGNFlagRegister(H);
+                SetZEROFlagRegisters(H);
+                SetAUXILLAYCARRYFlagRegister( H, oldValue, 0);
+                SetPARITYFlagRegister(H);
+                break;
+            }
+            case INSTRUCTIONS::DCR_L:
+            {
+                Byte oldValue = L;
+                L--;
+                SetSIGNFlagRegister(L);
+                SetZEROFlagRegisters(L);
+                SetAUXILLAYCARRYFlagRegister( L, oldValue, 0);
+                SetPARITYFlagRegister(L);
+                break;
+            }
+            case INSTRUCTIONS::DCR_M:
+            {
+                Word Address = ((H) << 8) | L;
+                Byte oldValue = memory[Address];
+                Cycles--;
+                memory[Address] = memory[Address] - 1;
+                Cycles--;
+                SetSIGNFlagRegister(memory[Address]);
+                SetZEROFlagRegisters(memory[Address]);
+                SetAUXILLAYCARRYFlagRegister( memory[Address], oldValue, 0);
+                SetPARITYFlagRegister(memory[Address]);
+                break;
+            }
+            case INSTRUCTIONS::DCX_B:
+            {
+                Word Address = ((B) << 8) | C;
+                memory[Address] = memory[Address] - 1;
+                break;
+            }
+            case INSTRUCTIONS::DCX_D:
+            {
+                Word Address = ((D) << 8) | E;
+                memory[Address] = memory[Address] - 1;
+                break;
+            }
+            case INSTRUCTIONS::DCX_H:
+            {
+                Word Address = ((H) << 8) | L;
+                memory[Address] = memory[Address] - 1;
+                break;
+            }
+            case INSTRUCTIONS::DCX_SP:
+            {
+                memory[SP] = memory[SP] - 1;
+                break;
+            }
+            case INSTRUCTIONS::INR_A:
+            {
+                Byte oldValue = A;
+                A++;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 1);
+                SetPARITYFlagRegister(A);
+                break;
+            }
+            case INSTRUCTIONS::INR_B:
+            {
+                Byte oldValue = B;
+                B++;
+                SetSIGNFlagRegister(B);
+                SetZEROFlagRegisters(B);
+                SetAUXILLAYCARRYFlagRegister( B, oldValue, 1);
+                SetPARITYFlagRegister(B);
+                break;
+            }
+            case INSTRUCTIONS::INR_C:
+            {
+                Byte oldValue = C;
+                C++;
+                SetSIGNFlagRegister(C);
+                SetZEROFlagRegisters(C);
+                SetAUXILLAYCARRYFlagRegister( C, oldValue, 1);
+                SetPARITYFlagRegister(C);
+                break;
+            }
+            case INSTRUCTIONS::INR_D:
+            {
+                Byte oldValue = D;
+                D++;
+                SetSIGNFlagRegister(D);
+                SetZEROFlagRegisters(D);
+                SetAUXILLAYCARRYFlagRegister( D, oldValue, 1);
+                SetPARITYFlagRegister(D);
+                break;
+            }
+            case INSTRUCTIONS::INR_E:
+            {
+                Byte oldValue = E;
+                E++;
+                SetSIGNFlagRegister(E);
+                SetZEROFlagRegisters(E);
+                SetAUXILLAYCARRYFlagRegister( E, oldValue, 1);
+                SetPARITYFlagRegister(E);
+                break;
+            }
+            case INSTRUCTIONS::INR_H:
+            {
+                Byte oldValue = H;
+                H++;
+                SetSIGNFlagRegister(H);
+                SetZEROFlagRegisters(H);
+                SetAUXILLAYCARRYFlagRegister( H, oldValue, 1);
+                SetPARITYFlagRegister(H);
+                break;
+            }
+            case INSTRUCTIONS::INR_L:
+            {
+                Byte oldValue = L;
+                L++;
+                SetSIGNFlagRegister(L);
+                SetZEROFlagRegisters(L);
+                SetAUXILLAYCARRYFlagRegister( L, oldValue, 1);
+                SetPARITYFlagRegister(L);
+                break;
+            }
             default:
             {
                 printf("Instruction not handled %d", Ins);
