@@ -16,9 +16,9 @@ This project aims to emulate the 8085 microprocessor and implement all its instr
 | SHLD        | Store H-L pair directly.               | ✅ Done    |
 | XCHG        | Exchange H-L with D-E.                 | ✅ Done    |
 | PUSH        | Push register pair onto the stack.     | ✅ Done    |
-| POP         | Pop register pair from the stack.      | ✅ Done |
+| POP         | Pop register pair from the stack.      | ✅ Done    |
 | OUT         | Output to port.                        | ✅ Done    |
-| IN          | Input from port.                       | ✅ Done |
+| IN          | Input from port.                       | ✅ Done    |
 
 ## Arithmetic Instructions
 
@@ -29,9 +29,9 @@ This project aims to emulate the 8085 microprocessor and implement all its instr
 | SUB         | Subtract register from accumulator.            | 🔲 Pending |
 | SBB         | Subtract register with borrow.                 | 🔲 Pending |
 | INR         | Increment register.                            | 🔲 Pending |
-| DCR         | Decrement register.                            | 🔲 Pending |
+| DCR         | Decrement register.                            | ✅ Done    |
 | CMP         | Compare register with accumulator.             | ✅ Done    |
-| CPI         | Compare immediate with accumulator.            | 🔲 Pending |
+| CPI         | Compare immediate with accumulator.            | ✅ Done    |
 
 ## Logical Instructions
 
