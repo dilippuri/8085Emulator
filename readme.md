@@ -84,10 +84,17 @@ This project aims to emulate the 8085 microprocessor and implement all its instr
 ### How to Contribute
 
 1. Clone the repository.
-2. Add or update instruction implementations.
-3. Ensure proper flag handling.
-4. Update this README checklist to reflect your changes.
-5. Submit a pull request!
+2. Go to the cloned project directory.  
+3. Make a ' build ' name dirrectory.
+4. Go to the build directory and run the command ``` cmake ..```.  ( This will build the project make file ).
+5. Add or update instruction implementations.
+6. Ensure proper flag handling.  
+7. Add the test case for your project.
+8. Now we have to compile the project.  
+9. Make sure you are in the ' build ' directory and run the command ``` make ``. ( This will execute the make command ).  
+10. Run The Command to Run the test cases. ( Make sure all the test cases are pass ).
+11. Update this README checklist to reflect your changes.
+12. Submit a pull request!
 
 ---
 
