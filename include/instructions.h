@@ -165,4 +165,28 @@ struct INSTRUCTIONS
     static Byte constexpr ANA_L = 0xA5;
     static Byte constexpr ANA_M = 0xA6; // AND with memory location pointing by the HL register pair
 
+    static Byte constexpr DCR_A = 0x3D;
+    static Byte constexpr DCR_B = 0x05;
+    static Byte constexpr DCR_C = 0x0D;
+    static Byte constexpr DCR_D = 0x15;
+    static Byte constexpr DCR_E = 0x1D;
+    static Byte constexpr DCR_H = 0x25;
+    static Byte constexpr DCR_L = 0x2D;
+    static Byte constexpr DCR_M = 0x35;
+
+    static Byte constexpr DCX_B = 0x0B;
+    static Byte constexpr DCX_D = 0x1B;
+    static Byte constexpr DCX_H = 0x2B;
+    static Byte constexpr DCX_SP = 0x3B;
+
+    static Byte constexpr INR_A = 0x3C;
+    static Byte constexpr INR_B = 0x04;
+    static Byte constexpr INR_C = 0x0C;
+    static Byte constexpr INR_D = 0x14;
+    static Byte constexpr INR_E = 0x1C;
+    static Byte constexpr INR_H = 0x24;
+    static Byte constexpr INR_L = 0x2C;
+    static Byte constexpr INR_M = 0x34;
+
+
 };
