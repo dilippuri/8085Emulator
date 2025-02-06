@@ -822,3 +822,43 @@ TEST_F(EmulatorTest, INR_L) {
     EXPECT_EQ(cpu.flag.P, 0x01);
     EXPECT_EQ(cpu.L, 0x00);
 }
+
+
+TEST_F(EmulatorTest, INX_B) {
+    cpu.Reset(mem);
+    cpu.C = 0x00;
+    cpu.B = 0x80;
+    mem[0x8000] = 0x00;
+    mem[0x0000] = INSTRUCTIONS::INX_B;
+    cpu.Execute(1, mem);
+    EXPECT_EQ(mem[0x8000], 0x01);
+}
+
+TEST_F(EmulatorTest, INX_D) {
+    cpu.Reset(mem);
+    cpu.E = 0x00;
+    cpu.D = 0x80;
+    mem[0x8000] = 0x00;
+    mem[0x0000] = INSTRUCTIONS::INX_D;
+    cpu.Execute(1, mem);
+    EXPECT_EQ(mem[0x8000], 0x01);
+}
+
+TEST_F(EmulatorTest, INX_H) {
+    cpu.Reset(mem);
+    cpu.L = 0x00;
+    cpu.H = 0x80;
+    mem[0x8000] = 0x00;
+    mem[0x0000] = INSTRUCTIONS::INX_H;
+    cpu.Execute(1, mem);
+    EXPECT_EQ(mem[0x8000], 0x01);
+}
+
+TEST_F(EmulatorTest, INX_SP) {
+    cpu.Reset(mem);
+    cpu.SP = 0x8000;
+    mem[0x8000] = 0x00;
+    mem[0x0000] = INSTRUCTIONS::INX_SP;
+    cpu.Execute(1, mem);
+    EXPECT_EQ(mem[0x8000], 0x01);
+}

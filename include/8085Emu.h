@@ -855,6 +855,29 @@ struct CPU
                 SetPARITYFlagRegister(L);
                 break;
             }
+            case INSTRUCTIONS::INX_B:
+            {
+                Word Address = ((B) << 8) | C;
+                memory[Address] = memory[Address] + 1;
+                break;
+            }
+            case INSTRUCTIONS::INX_D:
+            {
+                Word Address = ((D) << 8) | E;
+                memory[Address] = memory[Address] + 1;
+                break;
+            }
+            case INSTRUCTIONS::INX_H:
+            {
+                Word Address = ((H) << 8) | L;
+                memory[Address] = memory[Address] + 1;
+                break;
+            }
+            case INSTRUCTIONS::INX_SP:
+            {
+                memory[SP] = memory[SP] + 1;
+                break;
+            }
             default:
             {
                 printf("Instruction not handled %d", Ins);

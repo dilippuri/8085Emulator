@@ -188,5 +188,10 @@ struct INSTRUCTIONS
     static Byte constexpr INR_L = 0x2C;
     static Byte constexpr INR_M = 0x34;
 
+    static Byte constexpr INX_B = 0x03;
+    static Byte constexpr INX_D = 0x13;
+    static Byte constexpr INX_H = 0x23;
+    static Byte constexpr INX_SP = 0x33;
+
 
 };
