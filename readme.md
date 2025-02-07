@@ -24,11 +24,11 @@ This project aims to emulate the 8085 microprocessor and implement all its instr
 
 | Instruction | Description                                     | Status     |
 |-------------|-------------------------------------------------|------------|
-| ADD         | Add register to accumulator.                   | 🔲 Pending |
-| ADC         | Add register to accumulator with carry.        | 🔲 Pending |
+| ADD         | Add register to accumulator.                   | ✅ Done    |
+| ADC         | Add register to accumulator with carry.        | ✅ Done    |
 | SUB         | Subtract register from accumulator.            | 🔲 Pending |
 | SBB         | Subtract register with borrow.                 | 🔲 Pending |
-| INR         | Increment register.                            | 🔲 Pending |
+| INR         | Increment register.                            | ✅ Done    |
 | DCR         | Decrement register.                            | ✅ Done    |
 | CMP         | Compare register with accumulator.             | ✅ Done    |
 | CPI         | Compare immediate with accumulator.            | ✅ Done    |

@@ -193,5 +193,24 @@ struct INSTRUCTIONS
     static Byte constexpr INX_H = 0x23;
     static Byte constexpr INX_SP = 0x33;
 
+    static Byte constexpr ADD_A = 0x87;
+    static Byte constexpr ADD_B = 0x80;
+    static Byte constexpr ADD_C = 0x81;
+    static Byte constexpr ADD_D = 0x82;
+    static Byte constexpr ADD_E = 0x83;
+    static Byte constexpr ADD_H = 0x84;
+    static Byte constexpr ADD_L = 0x85;
+    static Byte constexpr ADD_M = 0x86;
+
+    static Byte constexpr ADI_DATA = 0xC6;
+
+    static Byte constexpr ADC_A = 0x8F;
+    static Byte constexpr ADC_B = 0x88;
+    static Byte constexpr ADC_C = 0x89;
+    static Byte constexpr ADC_D = 0x8A;
+    static Byte constexpr ADC_E = 0x8B;
+    static Byte constexpr ADC_H = 0x8C;
+    static Byte constexpr ADC_L = 0x8D;
+    static Byte constexpr ADC_M = 0x8E;
 
 };

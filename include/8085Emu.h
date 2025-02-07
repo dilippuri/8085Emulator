@@ -878,6 +878,206 @@ struct CPU
                 memory[SP] = memory[SP] + 1;
                 break;
             }
+            case INSTRUCTIONS::ADD_A:
+            {
+                Byte oldValue = A;
+                A = A + A;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(oldValue, 0);
+                break;
+
+            }
+            case INSTRUCTIONS::ADD_B:
+            {
+                Byte oldValue = A;
+                A = A + B;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(oldValue, 0);
+                break;
+
+            }
+            case INSTRUCTIONS::ADD_C:
+            {
+                Byte oldValue = A;
+                A = A + C;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(oldValue, 0);
+                break;
+
+            }
+            case INSTRUCTIONS::ADD_D:
+            {
+                Byte oldValue = A;
+                A = A + D;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(oldValue, 0);
+                break;
+
+            }
+            case INSTRUCTIONS::ADD_E:
+            {
+                Byte oldValue = A;
+                A = A + E;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(oldValue, 0);
+                break;
+
+            }
+            case INSTRUCTIONS::ADD_H:
+            {
+                Byte oldValue = A;
+                A = A + H;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(oldValue, 0);
+                break;
+
+            }
+            case INSTRUCTIONS::ADD_L:
+            {
+                Byte oldValue = A;
+                A = A + L;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(oldValue, 0);
+                break;
+
+            }
+            case INSTRUCTIONS::ADD_M:
+            {
+                Word Address = ((H) << 8) | L;
+                Byte oldValue = memory[Address];
+                A = A + memory[Address];
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(oldValue, 0);
+                break;
+
+            }
+            case INSTRUCTIONS::ADI_DATA:
+            {
+                Byte Data = ReadByte(Cycles, memory);
+                Byte oldValue = A;
+                A = A + Data;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(oldValue, 0);
+                break;
+
+            }
+            case INSTRUCTIONS::ADC_A:
+            {
+                Byte oldValue = A;
+                A = A + A + flag.CY;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(oldValue, 0);
+                break;
+            }
+            case INSTRUCTIONS::ADC_B:
+            {
+                Byte oldValue = A;
+                A = A + B + flag.CY;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(oldValue, 0);
+                break;
+            }
+            case INSTRUCTIONS::ADC_C:
+            {
+                Byte oldValue = A;
+                A = A + C + flag.CY;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(oldValue, 0);
+                break;
+            }
+            case INSTRUCTIONS::ADC_D:
+            {
+                Byte oldValue = A;
+                A = A + D + flag.CY;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(oldValue, 0);
+                break;
+            }
+            case INSTRUCTIONS::ADC_E:
+            {
+                Byte oldValue = A;
+                A = A + E + flag.CY;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(oldValue, 0);
+                break;
+            }
+            case INSTRUCTIONS::ADC_H:
+            {
+                Byte oldValue = A;
+                A = A + H + flag.CY;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(oldValue, 0);
+                break;
+            }
+            case INSTRUCTIONS::ADC_L:
+            {
+                Byte oldValue = A;
+                A = A + L + flag.CY;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(oldValue, 0);
+                break;
+            }
+            case INSTRUCTIONS::ADC_M:
+            {
+                Byte oldValue = A;
+                Word Address = ((H) << 8) | L;
+                Byte Data = ReadAddress(Cycles, Address, memory);
+                A = A + Data + flag.CY;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(oldValue, 0);
+                break;
+            }
             default:
             {
                 printf("Instruction not handled %d", Ins);
