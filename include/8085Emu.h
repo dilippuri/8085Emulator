@@ -986,7 +986,6 @@ struct CPU
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
-
             }
             case INSTRUCTIONS::ADC_A:
             {
@@ -1076,6 +1075,215 @@ struct CPU
                 SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
+                break;
+            }
+            case INSTRUCTIONS::SUB_A:
+            {
+                Byte oldValue = A;
+                A = A - A;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
+                break;
+            }
+            case INSTRUCTIONS::SUB_B:
+            {
+                Byte oldValue = A;
+                A = A - B;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
+                break;
+
+            }
+            case INSTRUCTIONS::SUB_C:
+            {
+                Byte oldValue = A;
+                A = A - C;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
+                break;
+
+            }
+            case INSTRUCTIONS::SUB_D:
+            {
+                Byte oldValue = A;
+                A = A - D;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
+                break;
+
+            }
+            case INSTRUCTIONS::SUB_E:
+            {
+                Byte oldValue = A;
+                A = A - E;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
+                break;
+
+            }
+            case INSTRUCTIONS::SUB_H:
+            {
+                Byte oldValue = A;
+                A = A - H;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
+                break;
+
+            }
+            case INSTRUCTIONS::SUB_L:
+            {
+                Byte oldValue = A;
+                A = A - L;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
+                break;
+
+            }
+            case INSTRUCTIONS::SUB_M:
+            {
+                Word Address = ((H) << 8) | L;
+                Byte oldValue = memory[Address];
+                A = A - memory[Address];
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
+                break;
+            }
+            case INSTRUCTIONS::SUI_DATA:
+            {
+                Byte Data = ReadByte(Cycles, memory);
+                Byte oldValue = A;
+                A = A - Data;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
+                break;
+            }
+            case INSTRUCTIONS::SBB_A:
+            {
+                Byte oldValue = A;
+                A = A - A - flag.CY;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
+                break;
+            }
+            case INSTRUCTIONS::SBB_B:
+            {
+                Byte oldValue = A;
+                A = A - B - flag.CY;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
+                break;
+            }
+            case INSTRUCTIONS::SBB_C:
+            {
+                Byte oldValue = A;
+                A = A - C - flag.CY;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
+                break;
+            }
+            case INSTRUCTIONS::SBB_D:
+            {
+                Byte oldValue = A;
+                A = A - D - flag.CY;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
+                break;
+            }
+            case INSTRUCTIONS::SBB_E:
+            {
+                Byte oldValue = A;
+                A = A - E - flag.CY;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
+                break;
+            }
+            case INSTRUCTIONS::SBB_H:
+            {
+                Byte oldValue = A;
+                A = A - H - flag.CY;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
+                break;
+            }
+            case INSTRUCTIONS::SBB_L:
+            {
+                Byte oldValue = A;
+                A = A - L - flag.CY;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
+                break;
+            }
+            case INSTRUCTIONS::SBB_M:
+            {
+                Byte oldValue = A;
+                Word Address = ((H) << 8) | L;
+                Byte Data = ReadAddress(Cycles, Address, memory);
+                A = A - Data - flag.CY;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
+                break;
+            }
+            case INSTRUCTIONS::SBI_DATA:
+            {
+                Byte Data = ReadByte(Cycles, memory);
+                Byte oldValue = A;
+                A = A - Data - flag.CY;
+                SetSIGNFlagRegister(A);
+                SetZEROFlagRegisters(A);
+                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetPARITYFlagRegister(A);
+                SetCARRYFlagRegister(A, 0);
                 break;
             }
             default:

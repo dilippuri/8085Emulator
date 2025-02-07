@@ -213,4 +213,27 @@ struct INSTRUCTIONS
     static Byte constexpr ADC_L = 0x8D;
     static Byte constexpr ADC_M = 0x8E;
 
+    static Byte constexpr SUB_A = 0x97;
+    static Byte constexpr SUB_B = 0x90;
+    static Byte constexpr SUB_C = 0x91;
+    static Byte constexpr SUB_D = 0x92;
+    static Byte constexpr SUB_E = 0x93;
+    static Byte constexpr SUB_H = 0x94;
+    static Byte constexpr SUB_L = 0x95;
+    static Byte constexpr SUB_M = 0x96;
+
+    static Byte constexpr SUI_DATA = 0xD6;
+
+    static Byte constexpr SBB_A = 0x9F;
+    static Byte constexpr SBB_B = 0x98;
+    static Byte constexpr SBB_C = 0x99;
+    static Byte constexpr SBB_D = 0x9A;
+    static Byte constexpr SBB_E = 0x9B;
+    static Byte constexpr SBB_H = 0x9C;
+    static Byte constexpr SBB_L = 0x9D;
+    static Byte constexpr SBB_M = 0x9E;
+
+    static Byte constexpr SBI_DATA = 0xDE;
+
+
 };
