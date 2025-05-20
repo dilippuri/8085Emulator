@@ -1102,7 +1102,7 @@ TEST_F(EmulatorTest, ADC_M) {
     cpu.H = 0x24;
     cpu.flag.CY = 1;
     mem[0x2414] = 0x14;
-    mem[0x0000] = INSTRUCTIONS::ADC_A;
+    mem[0x0000] = INSTRUCTIONS::ADC_M;
     cpu.Execute(2, mem);
     EXPECT_EQ(cpu.flag.S, 0x00);
     EXPECT_EQ(cpu.flag.Z, 0x00);
@@ -1353,7 +1353,7 @@ TEST_F(EmulatorTest, SBB_M) {
     cpu.H = 0x24;
     cpu.flag.CY = 1;
     mem[0x2414] = 0x10;
-    mem[0x0000] = INSTRUCTIONS::SBB_A;
+    mem[0x0000] = INSTRUCTIONS::SBB_M;
     cpu.Execute(2, mem);
     EXPECT_EQ(cpu.flag.S, 0x01);
     EXPECT_EQ(cpu.flag.Z, 0x00);
@@ -1367,7 +1367,7 @@ TEST_F(EmulatorTest, SBI_DATA) {
     cpu.Reset(mem);
     cpu.A = 0x10;
     cpu.flag.CY = 1;
-    mem[0x0000] = INSTRUCTIONS::SBB_A;
+    mem[0x0000] = INSTRUCTIONS::SBI_DATA;
     mem[0x0001] = 0x10;
     cpu.Execute(2, mem);
     EXPECT_EQ(cpu.flag.S, 0x01);
