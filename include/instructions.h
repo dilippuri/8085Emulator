@@ -235,4 +235,9 @@ struct INSTRUCTIONS
 
     static Byte constexpr SBI_DATA = 0xDE;
 
+    static Byte constexpr NOP = 0x00;
+    static Byte constexpr HLT = 0x07;
+
+    static Byte constexpr INSTRUCTIONS_COUNT = 0xFF;
+
 };

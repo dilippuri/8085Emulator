@@ -47,6 +47,9 @@ struct CPU
     // special purpose register
     Byte A; // accumulator
 
+    // track to halt state
+    Byte halted;
+
     // flag registers
     struct Flag
     {
@@ -81,77 +84,90 @@ struct CPU
     } port;
 
     // Rest the CPU.
-    void Reset(Mem& memory)
+    void reset(Mem& memory)
     {
-        B, C, D, E, H, L = 0;
-        W, Z = 0;
+        B = 0, C = 0, D = 0, E = 0, H = 0, L = 0;
+        W = 0, Z = 0;
         PC = 0;
         SP = 0xFFFF;
+        IR = 0;
         A = 0;
         flag.S = flag.Z = flag.AC = flag.P = flag.CY = 0;
         memory.Init();
         port.Data = port.PortAddress = 0;
         port.IO = port.WR = 0;
+        halted = 0;
+    }
+
+    void dumpState() const {
+        printf("\ncurrent state of CPU\n");
+        printf("A: 0x%x B: 0x%x C: 0x%x\n", (int)A, (int)B, (int)C);
+        printf("PC: 0x%x SP: 0x%x, IR: 0x%x\n", (int)PC, (int)SP, (int)IR);
+        printf("Flags: S=%d Z=%d AC=%d P=%d CY=%d\n",
+            (int)flag.S, (int)flag.Z,
+            (int)flag.AC, (int)flag.P, (int)flag.CY);
+        printf("\n");
     }
 
     // Fetch the opcode from instructions.
-    Byte OpCodeFetch(u32& Cycles, Mem& memory )
+    Byte OpCodeFetch(u32& cycles, Mem& memory )
     {
-        Byte Data = memory[PC];
+        Byte opcode = memory[PC];
+        IR = opcode;
         PC++;
-        Cycles--;
-        return Data;
+        cycles--;
+        return opcode;
     }
 
     // Read a Byte (8-bit) from a memory
-    Byte ReadByte(u32& Cycles, Mem& memory)
+    Byte ReadByte(u32& cycles, Mem& memory)
     {
         Byte Data = memory[PC];
         PC++;
-        Cycles--;
+        cycles--;
         return Data;
     }
 
     // Read a Word (16-bit) from a memory
-    Word ReadWord(u32& Cycles, Mem& memory)
+    Word ReadWord(u32& cycles, Mem& memory)
     {
         Word Data = memory[PC];
         PC++;
         Data |= (memory[PC] << 8);
-        Cycles-=2;
+        cycles-=2;
         return Data;
     }
 
     // Read a Byte from the specify memory Address
-    Byte ReadAddress(u32& Cycles, Word Address, Mem& memory)
+    Byte ReadAddress(u32& cycles, Word Address, Mem& memory)
     {
         Byte Data = memory[Address];
-        Cycles--;
+        cycles--;
         return Data;
     }
 
     // Write A Byte at the specify memory Address
-    void WriteAddress(u32& Cycles, Word Address, Byte value, Mem& memory)
+    void WriteAddress(u32& cycles, Word Address, Byte value, Mem& memory)
     {
         memory[Address] = value;
-        Cycles--;
+        cycles--;
     }
 
     // Push a Byte in the Stack at an address specify by the SP (Stack Poniter) and Decrease the SP.
-    void StackPUSH(u32& Cycles, Byte value, Mem& memory)
+    void StackPUSH(u32& cycles, Byte value, Mem& memory)
     {
         SP--;
         memory[SP] = value;
-        Cycles--;
+        cycles--;
     }
 
     // POP a Byte in the Stack at an address specify by the SP (Stack Poniter) and Increase the SP.
-    Byte StackPOP(u32& Cycles, Mem& memory)
+    Byte StackPOP(u32& cycles, Mem& memory)
     {
         Byte Data = memory[SP];
         memory[SP] = 0x00;
         SP++;
-        Cycles--;
+        cycles--;
         return Data;
     }
 
@@ -232,7 +248,8 @@ struct CPU
         }
     }
 
-    void ANA(Byte value) {
+    void ANA(Byte value)
+    {
         // Perform the AND operation
         A = A & value;
         SetSIGNFlagRegister(A);
@@ -242,42 +259,52 @@ struct CPU
         SetCARRYFlagRegister(0, 0);
     }
 
-
-    void Execute(u32 Cycles, Mem& memory)
+    void nop()
     {
-        while(Cycles > 0)
-        {
-            Byte Ins = OpCodeFetch(Cycles, memory);
+        // No operations
+    }
 
-            switch (Ins)
+    void halt()
+    {
+        // CPU finishes executing current instruction and halts any further execution
+        halted = 1;
+    }
+
+    void execute(u32 cycles, Mem& memory)
+    {
+        while(cycles > 0)
+        {
+            Byte inst = OpCodeFetch(cycles, memory);
+
+            switch (inst)
             {
             case INSTRUCTIONS::LDA_ADDRESS:
             {
-                Word value = ReadWord(Cycles, memory);
-                A = ReadAddress(Cycles, value, memory);
+                Word value = ReadWord(cycles, memory);
+                A = ReadAddress(cycles, value, memory);
                 break;
             }
             case INSTRUCTIONS::LDAX_B:
             {
                 Word Address = ((B) << 8) | C;
                 A = memory[Address];
-                Cycles--;
+                cycles--;
                 break;
             }
             case INSTRUCTIONS::LDAX_D:
             {
                 Word Address = ((D) << 8) | E;
                 A = memory[Address];
-                Cycles--;
+                cycles--;
                 break;
             }
             case INSTRUCTIONS::LHLD_ADDRESS:
             {
-                Byte LowerByte = ReadByte(Cycles, memory);
-                Byte HigherByte = ReadByte(Cycles, memory);
+                Byte LowerByte = ReadByte(cycles, memory);
+                Byte HigherByte = ReadByte(cycles, memory);
                 Word Address = ((HigherByte) << 8) | LowerByte;
-                L = ReadAddress(Cycles, Address, memory);
-                H = ReadAddress(Cycles, Address+1, memory);
+                L = ReadAddress(cycles, Address, memory);
+                H = ReadAddress(cycles, Address+1, memory);
                 break;
             }
             case INSTRUCTIONS::MOV_A_A:
@@ -339,113 +366,113 @@ struct CPU
             }
             case INSTRUCTIONS::MVI_A_DATA:
             {
-                Byte Data = ReadByte(Cycles, memory);
+                Byte Data = ReadByte(cycles, memory);
                 A = Data;
                 break;
             }
             case INSTRUCTIONS::MVI_B_DATA:
             {
-                Byte Data = ReadByte(Cycles, memory);
+                Byte Data = ReadByte(cycles, memory);
                 B = Data;
                 break;
             }
             case INSTRUCTIONS::MVI_C_DATA:
             {
-                Byte Data = ReadByte(Cycles, memory);
+                Byte Data = ReadByte(cycles, memory);
                 C = Data;
                 break;
             }
             case INSTRUCTIONS::MVI_D_DATA:
             {
-                Byte Data = ReadByte(Cycles, memory);
+                Byte Data = ReadByte(cycles, memory);
                 D = Data;
                 break;
             }
             case INSTRUCTIONS::MVI_E_DATA:
             {
-                Byte Data = ReadByte(Cycles, memory);
+                Byte Data = ReadByte(cycles, memory);
                 E = Data;
                 break;
             }
             case INSTRUCTIONS::MVI_H_DATA:
             {
-                Byte Data = ReadByte(Cycles, memory);
+                Byte Data = ReadByte(cycles, memory);
                 H = Data;
                 break;
             }
             case INSTRUCTIONS::MVI_L_DATA:
             {
-                Byte Data = ReadByte(Cycles, memory);
+                Byte Data = ReadByte(cycles, memory);
                 L = Data;
                 break;
             }
             case INSTRUCTIONS::MVI_M_DATA:
             {
                 Word Address = ((H) << 8) | L;
-                memory[Address] = ReadByte(Cycles, memory);
+                memory[Address] = ReadByte(cycles, memory);
                 break;
             }
             case INSTRUCTIONS::LXI_B:
             {
-                Byte LowerByte = ReadByte(Cycles, memory);
+                Byte LowerByte = ReadByte(cycles, memory);
                 C = LowerByte;
-                Byte HigherByte = ReadByte(Cycles, memory);
+                Byte HigherByte = ReadByte(cycles, memory);
                 B = HigherByte;
                 break;
             }
             case INSTRUCTIONS::LXI_D:
             {
-                Byte LowerByte = ReadByte(Cycles, memory);
+                Byte LowerByte = ReadByte(cycles, memory);
                 E = LowerByte;
-                Byte HigherByte = ReadByte(Cycles, memory);
+                Byte HigherByte = ReadByte(cycles, memory);
                 D = HigherByte;
                 break;
             }
             case INSTRUCTIONS::LXI_H:
             {
-                Byte LowerByte = ReadByte(Cycles, memory);
+                Byte LowerByte = ReadByte(cycles, memory);
                 L = LowerByte;
-                Byte HigherByte = ReadByte(Cycles, memory);
+                Byte HigherByte = ReadByte(cycles, memory);
                 H = HigherByte;
                 break;
             }
             case INSTRUCTIONS::LXI_SP:
             {
-                Byte LowerByte = ReadByte(Cycles, memory);
-                Byte HigherByte = ReadByte(Cycles, memory);
+                Byte LowerByte = ReadByte(cycles, memory);
+                Byte HigherByte = ReadByte(cycles, memory);
                 SP = ((HigherByte) << 8) | LowerByte;
                 break;
             }
             case INSTRUCTIONS::STA_ADDRESS:
             {
-                Byte LowerByte = ReadByte(Cycles, memory);
-                Byte HigherByte = ReadByte(Cycles, memory);
+                Byte LowerByte = ReadByte(cycles, memory);
+                Byte HigherByte = ReadByte(cycles, memory);
                 Word Address = ((HigherByte) << 8) | LowerByte;
                 memory[Address] = A;
-                Cycles--;
+                cycles--;
                 break;
             }
             case INSTRUCTIONS::STAX_B:
             {
                 Word Address = ((B) << 8) | C;
                 memory[Address] = A;
-                Cycles--;
+                cycles--;
                 break;
             }
             case INSTRUCTIONS::STAX_D:
             {
                 Word Address = ((D) << 8) | E;
                 memory[Address] = A;
-                Cycles--;
+                cycles--;
                 break;
             }
             case INSTRUCTIONS::SHLD_ADDRESS:
             {
-                Byte LowerByte = ReadByte(Cycles, memory);
-                Byte HigherByte = ReadByte(Cycles, memory);
+                Byte LowerByte = ReadByte(cycles, memory);
+                Byte HigherByte = ReadByte(cycles, memory);
                 Word Address = ((HigherByte) << 8) | LowerByte;
-                WriteAddress(Cycles, Address, L, memory);
-                WriteAddress(Cycles, Address+1, H, memory);
+                WriteAddress(cycles, Address, L, memory);
+                WriteAddress(cycles, Address+1, H, memory);
                 break;
             }
             case INSTRUCTIONS::XCHG:
@@ -478,75 +505,75 @@ struct CPU
             }
             case INSTRUCTIONS::PUSH_B:
             {
-                StackPUSH(Cycles, B, memory);
-                StackPUSH(Cycles, C, memory);
-                Cycles--;
+                StackPUSH(cycles, B, memory);
+                StackPUSH(cycles, C, memory);
+                cycles--;
                 break;
             }
             case INSTRUCTIONS::PUSH_D:
             {
-                StackPUSH(Cycles, D, memory);
-                StackPUSH(Cycles, E, memory);
-                Cycles--;
+                StackPUSH(cycles, D, memory);
+                StackPUSH(cycles, E, memory);
+                cycles--;
                 break;
             }
             case INSTRUCTIONS::PUSH_H:
             {
-                StackPUSH(Cycles, H, memory);
-                StackPUSH(Cycles, L, memory);
-                Cycles--;
+                StackPUSH(cycles, H, memory);
+                StackPUSH(cycles, L, memory);
+                cycles--;
                 break;
             }
             case INSTRUCTIONS::PUSH_PSW:
             {
-                StackPUSH(Cycles, A, memory);
-                StackPUSH(Cycles, flag.getFlagRegister(), memory);
-                Cycles--;
+                StackPUSH(cycles, A, memory);
+                StackPUSH(cycles, flag.getFlagRegister(), memory);
+                cycles--;
                 break;
             }
             case INSTRUCTIONS::POP_B:
             {
-                C = StackPOP(Cycles, memory);
-                B = StackPOP(Cycles, memory);
+                C = StackPOP(cycles, memory);
+                B = StackPOP(cycles, memory);
                 break;
             }
             case INSTRUCTIONS::POP_D:
             {
-                E = StackPOP(Cycles, memory);
-                D = StackPOP(Cycles, memory);
+                E = StackPOP(cycles, memory);
+                D = StackPOP(cycles, memory);
                 break;
             }
             case INSTRUCTIONS::POP_H:
             {
-                L = StackPOP(Cycles, memory);
-                H = StackPOP(Cycles, memory);
+                L = StackPOP(cycles, memory);
+                H = StackPOP(cycles, memory);
                 break;
             }
             case INSTRUCTIONS::POP_PSW:
             {
-                Byte FlagValue = StackPOP(Cycles, memory);
+                Byte FlagValue = StackPOP(cycles, memory);
                 flag.setFlagsFromHex(FlagValue);
-                A = StackPOP(Cycles, memory);
+                A = StackPOP(cycles, memory);
                 break;
             }
             case INSTRUCTIONS::OUT:
             {
-                Byte Address = ReadByte(Cycles, memory);
+                Byte Address = ReadByte(cycles, memory);
                 port.PortAddress = Address;
                 port.Data = A;
                 port.IO = 1;
                 port.WR = 1;
-                Cycles--;
+                cycles--;
                 break;
             }
             case INSTRUCTIONS::IN:
             {
-                Byte Address = ReadByte(Cycles, memory);
+                Byte Address = ReadByte(cycles, memory);
                 port.PortAddress = Address;
                 A = port.Data;
                 port.IO = 0;
                 port.WR = 0;
-                Cycles--;
+                cycles--;
                 break;
             }
             case INSTRUCTIONS::CMP_A:
@@ -633,7 +660,7 @@ struct CPU
             }
             case INSTRUCTIONS::CPI_DATA:
             {
-                Byte Data = ReadByte(Cycles, memory);
+                Byte Data = ReadByte(cycles, memory);
                 Byte Result = A - Data;
                 SetSIGNFlagRegister(Result);
                 SetZEROFlagRegisters(Result);
@@ -751,9 +778,9 @@ struct CPU
             {
                 Word Address = ((H) << 8) | L;
                 Byte oldValue = memory[Address];
-                Cycles--;
+                cycles--;
                 memory[Address] = memory[Address] - 1;
-                Cycles--;
+                cycles--;
                 SetSIGNFlagRegister(memory[Address]);
                 SetZEROFlagRegisters(memory[Address]);
                 SetAUXILLAYCARRYFlagRegister( memory[Address], oldValue, 0);
@@ -967,7 +994,7 @@ struct CPU
             }
             case INSTRUCTIONS::ADI_DATA:
             {
-                Byte Data = ReadByte(Cycles, memory);
+                Byte Data = ReadByte(cycles, memory);
                 Byte oldValue = A;
                 A = A + Data;
                 SetSIGNFlagRegister(A);
@@ -1058,7 +1085,7 @@ struct CPU
             {
                 Byte oldValue = A;
                 Word Address = ((H) << 8) | L;
-                Byte Data = ReadAddress(Cycles, Address, memory);
+                Byte Data = ReadAddress(cycles, Address, memory);
                 A = A + Data + flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
@@ -1158,7 +1185,7 @@ struct CPU
             }
             case INSTRUCTIONS::SUI_DATA:
             {
-                Byte Data = ReadByte(Cycles, memory);
+                Byte Data = ReadByte(cycles, memory);
                 Byte oldValue = A;
                 A = A - Data;
                 SetSIGNFlagRegister(A);
@@ -1249,7 +1276,7 @@ struct CPU
             {
                 Byte oldValue = A;
                 Word Address = ((H) << 8) | L;
-                Byte Data = ReadAddress(Cycles, Address, memory);
+                Byte Data = ReadAddress(cycles, Address, memory);
                 A = A - Data - flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
@@ -1260,7 +1287,7 @@ struct CPU
             }
             case INSTRUCTIONS::SBI_DATA:
             {
-                Byte Data = ReadByte(Cycles, memory);
+                Byte Data = ReadByte(cycles, memory);
                 Byte oldValue = A;
                 A = A - Data - flag.CY;
                 SetSIGNFlagRegister(A);
@@ -1270,9 +1297,20 @@ struct CPU
                 SetCARRYFlagRegister(A, 0);
                 break;
             }
+            case INSTRUCTIONS::NOP:
+            {
+                nop();
+                break;
+            }
+            case INSTRUCTIONS::HLT:
+            {
+                halt();
+                cycles = 0;
+                break;
+            }
             default:
             {
-                printf("Instruction not handled %d", Ins);
+                printf("Instruction not handled %d", inst);
                 break;
             }
             }
