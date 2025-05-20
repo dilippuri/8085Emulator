@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdio.h>
+#include<stdio.h>
 #include<common.h>
 #include<instructions.h>
 
@@ -18,7 +18,6 @@ struct Mem
         {
             Data[i] = 0;
         }
-        
     }
 
     Byte operator[](u32 Address) const
@@ -35,7 +34,7 @@ struct Mem
 
 //8085 CPU structure
 struct CPU
-{   
+{
     // general purpose registers
     Byte B, C, D, E, H, L;
 
@@ -80,9 +79,9 @@ struct CPU
         Byte IO : 1; // weather the take INPUT = 0 or OUTPUT = 1 (a bit value)
         Byte WR : 1; // weather port is READING = 0 or WRITING = 1 (a bit value)
     } port;
-    
+
     // Rest the CPU.
-    void Reset( Mem& memory)
+    void Reset(Mem& memory)
     {
         B, C, D, E, H, L = 0;
         W, Z = 0;
@@ -140,7 +139,7 @@ struct CPU
 
     // Push a Byte in the Stack at an address specify by the SP (Stack Poniter) and Decrease the SP.
     void StackPUSH(u32& Cycles, Byte value, Mem& memory)
-    {   
+    {
         SP--;
         memory[SP] = value;
         Cycles--;
@@ -148,7 +147,7 @@ struct CPU
 
     // POP a Byte in the Stack at an address specify by the SP (Stack Poniter) and Increase the SP.
     Byte StackPOP(u32& Cycles, Mem& memory)
-    {   
+    {
         Byte Data = memory[SP];
         memory[SP] = 0x00;
         SP++;
@@ -171,20 +170,20 @@ struct CPU
     // Set Zero Flag Register ( if value is 0 , then ZERO_FLAG : 1 )
     void SetZEROFlagRegisters(Byte value)
     {
-        if(value == 0) 
+        if(value == 0)
         {
             flag.Z = 1;
         }
         else
         {
             flag.Z = 0;
-        }  
+        }
     }
 
     // Set Sign Flag Register ( NEGATIVE : 1 , POSITIVE : 0 )
-    void SetSIGNFlagRegister(Byte value)  
+    void SetSIGNFlagRegister(Byte value)
     {
-        if( value & 0x80) 
+        if( value & 0x80)
         {
             flag.S = 1;
         }
@@ -197,7 +196,7 @@ struct CPU
     // Set Parity Flag Register ( if no. of 1's are EVEN, then PARITY_FLAG : 1 )
     void SetPARITYFlagRegister(Byte value)
     {
-        if(CheckOns(value))  
+        if(CheckOns(value))
         {
             flag.P = 1;
         }
@@ -238,12 +237,12 @@ struct CPU
         A = A & value;
         SetSIGNFlagRegister(A);
         SetZEROFlagRegisters(A);
-        SetAUXILLAYCARRYFlagRegister( A, value, 0);
+        SetAUXILLAYCARRYFlagRegister(A, value, 0);
         SetPARITYFlagRegister(A);
         SetCARRYFlagRegister(0, 0);
     }
 
-    
+
     void Execute(u32 Cycles, Mem& memory)
     {
         while(Cycles > 0)
@@ -273,7 +272,7 @@ struct CPU
                 break;
             }
             case INSTRUCTIONS::LHLD_ADDRESS:
-            {   
+            {
                 Byte LowerByte = ReadByte(Cycles, memory);
                 Byte HigherByte = ReadByte(Cycles, memory);
                 Word Address = ((HigherByte) << 8) | LowerByte;
@@ -315,7 +314,7 @@ struct CPU
             {
                 A = L;
                 break;
-            }          
+            }
             case INSTRUCTIONS::MOV_B_C:
             {
                 B = C;
@@ -441,7 +440,7 @@ struct CPU
                 break;
             }
             case INSTRUCTIONS::SHLD_ADDRESS:
-            {   
+            {
                 Byte LowerByte = ReadByte(Cycles, memory);
                 Byte HigherByte = ReadByte(Cycles, memory);
                 Word Address = ((HigherByte) << 8) | LowerByte;
@@ -458,13 +457,13 @@ struct CPU
                 break;
             }
             case INSTRUCTIONS::SPHL:
-            {   
+            {
                 Word Address = ((H) << 8) | L;
                 SP = Address;
                 break;
             }
             case INSTRUCTIONS::XTHL:
-            {   
+            {
                 H = H + memory[SP+1];
                 memory[SP+1] = H - memory[SP+1];  H = H - memory[SP+1]; // exchanging H and TOP
                 L = L + memory[SP];
@@ -472,7 +471,7 @@ struct CPU
                 break;
             }
             case INSTRUCTIONS::PCHL:
-            {   
+            {
                 Word Address = ((H) << 8) | L;
                 PC = Address;
                 break;
@@ -555,7 +554,7 @@ struct CPU
                 Byte Result = A - A;
                 SetSIGNFlagRegister(Result);
                 SetZEROFlagRegisters(Result);
-                SetAUXILLAYCARRYFlagRegister( A, A, 0);
+                SetAUXILLAYCARRYFlagRegister(A, A, 0);
                 SetPARITYFlagRegister(Result);
                 SetCARRYFlagRegister(Result, 0);
                 break;
@@ -565,7 +564,7 @@ struct CPU
                 Byte Result = A - B;
                 SetSIGNFlagRegister(Result);
                 SetZEROFlagRegisters(Result);
-                SetAUXILLAYCARRYFlagRegister( A, B, 0);
+                SetAUXILLAYCARRYFlagRegister(A, B, 0);
                 SetPARITYFlagRegister(Result);
                 SetCARRYFlagRegister(Result, 0);
                 break;
@@ -575,7 +574,7 @@ struct CPU
                 Byte Result = A - C;
                 SetSIGNFlagRegister(Result);
                 SetZEROFlagRegisters(Result);
-                SetAUXILLAYCARRYFlagRegister( A, C, 0);
+                SetAUXILLAYCARRYFlagRegister(A, C, 0);
                 SetPARITYFlagRegister(Result);
                 SetCARRYFlagRegister(Result, 0);
                 break;
@@ -583,10 +582,9 @@ struct CPU
             case INSTRUCTIONS::CMP_D:
             {
                 Byte Result = A - D;
-                printf("VASHU HERE %X\n", Result);
                 SetSIGNFlagRegister(Result);
                 SetZEROFlagRegisters(Result);
-                SetAUXILLAYCARRYFlagRegister( A, D, 0);
+                SetAUXILLAYCARRYFlagRegister(A, D, 0);
                 SetPARITYFlagRegister(Result);
                 SetCARRYFlagRegister(Result, 0);
                 break;
@@ -596,7 +594,7 @@ struct CPU
                 Byte Result = A - E;
                 SetSIGNFlagRegister(Result);
                 SetZEROFlagRegisters(Result);
-                SetAUXILLAYCARRYFlagRegister( A, E, 0);
+                SetAUXILLAYCARRYFlagRegister(A, E, 0);
                 SetPARITYFlagRegister(Result);
                 SetCARRYFlagRegister(Result, 0);
                 break;
@@ -606,7 +604,7 @@ struct CPU
                 Byte Result = A - H;
                 SetSIGNFlagRegister(Result);
                 SetZEROFlagRegisters(Result);
-                SetAUXILLAYCARRYFlagRegister( A, H, 0);
+                SetAUXILLAYCARRYFlagRegister(A, H, 0);
                 SetPARITYFlagRegister(Result);
                 SetCARRYFlagRegister(Result, 0);
                 break;
@@ -616,30 +614,30 @@ struct CPU
                 Byte Result = A - L;
                 SetSIGNFlagRegister(Result);
                 SetZEROFlagRegisters(Result);
-                SetAUXILLAYCARRYFlagRegister( A, L, 0);
+                SetAUXILLAYCARRYFlagRegister(A, L, 0);
                 SetPARITYFlagRegister(Result);
                 SetCARRYFlagRegister(Result, 0);
                 break;
             }
             case INSTRUCTIONS::CMP_M:
-            {   
+            {
                 Word Address = ((H) << 8) | L;
                 Byte Data = memory[Address];
                 Byte Result = A - Data;
                 SetSIGNFlagRegister(Result);
                 SetZEROFlagRegisters(Result);
-                SetAUXILLAYCARRYFlagRegister( A, Data, 0);
+                SetAUXILLAYCARRYFlagRegister(A, Data, 0);
                 SetPARITYFlagRegister(Result);
                 SetCARRYFlagRegister(Result, 0);
                 break;
             }
             case INSTRUCTIONS::CPI_DATA:
-            {   
+            {
                 Byte Data = ReadByte(Cycles, memory);
                 Byte Result = A - Data;
                 SetSIGNFlagRegister(Result);
                 SetZEROFlagRegisters(Result);
-                SetAUXILLAYCARRYFlagRegister( A, Data, 0);
+                SetAUXILLAYCARRYFlagRegister(A, Data, 0);
                 SetPARITYFlagRegister(Result);
                 SetCARRYFlagRegister(Result, 0);
                 break;
@@ -685,7 +683,7 @@ struct CPU
                 A--;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 break;
             }
@@ -695,7 +693,7 @@ struct CPU
                 B--;
                 SetSIGNFlagRegister(B);
                 SetZEROFlagRegisters(B);
-                SetAUXILLAYCARRYFlagRegister( B, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(B, oldValue, 0);
                 SetPARITYFlagRegister(B);
                 break;
             }
@@ -705,7 +703,7 @@ struct CPU
                 C--;
                 SetSIGNFlagRegister(C);
                 SetZEROFlagRegisters(C);
-                SetAUXILLAYCARRYFlagRegister( C, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(C, oldValue, 0);
                 SetPARITYFlagRegister(C);
                 break;
             }
@@ -715,7 +713,7 @@ struct CPU
                 D--;
                 SetSIGNFlagRegister(D);
                 SetZEROFlagRegisters(D);
-                SetAUXILLAYCARRYFlagRegister( D, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(D, oldValue, 0);
                 SetPARITYFlagRegister(D);
                 break;
             }
@@ -725,7 +723,7 @@ struct CPU
                 E--;
                 SetSIGNFlagRegister(E);
                 SetZEROFlagRegisters(E);
-                SetAUXILLAYCARRYFlagRegister( E, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(E, oldValue, 0);
                 SetPARITYFlagRegister(E);
                 break;
             }
@@ -735,7 +733,7 @@ struct CPU
                 H--;
                 SetSIGNFlagRegister(H);
                 SetZEROFlagRegisters(H);
-                SetAUXILLAYCARRYFlagRegister( H, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(H, oldValue, 0);
                 SetPARITYFlagRegister(H);
                 break;
             }
@@ -745,7 +743,7 @@ struct CPU
                 L--;
                 SetSIGNFlagRegister(L);
                 SetZEROFlagRegisters(L);
-                SetAUXILLAYCARRYFlagRegister( L, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(L, oldValue, 0);
                 SetPARITYFlagRegister(L);
                 break;
             }
@@ -791,7 +789,7 @@ struct CPU
                 A++;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 1);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 1);
                 SetPARITYFlagRegister(A);
                 break;
             }
@@ -801,7 +799,7 @@ struct CPU
                 B++;
                 SetSIGNFlagRegister(B);
                 SetZEROFlagRegisters(B);
-                SetAUXILLAYCARRYFlagRegister( B, oldValue, 1);
+                SetAUXILLAYCARRYFlagRegister(B, oldValue, 1);
                 SetPARITYFlagRegister(B);
                 break;
             }
@@ -811,7 +809,7 @@ struct CPU
                 C++;
                 SetSIGNFlagRegister(C);
                 SetZEROFlagRegisters(C);
-                SetAUXILLAYCARRYFlagRegister( C, oldValue, 1);
+                SetAUXILLAYCARRYFlagRegister(C, oldValue, 1);
                 SetPARITYFlagRegister(C);
                 break;
             }
@@ -821,7 +819,7 @@ struct CPU
                 D++;
                 SetSIGNFlagRegister(D);
                 SetZEROFlagRegisters(D);
-                SetAUXILLAYCARRYFlagRegister( D, oldValue, 1);
+                SetAUXILLAYCARRYFlagRegister(D, oldValue, 1);
                 SetPARITYFlagRegister(D);
                 break;
             }
@@ -831,7 +829,7 @@ struct CPU
                 E++;
                 SetSIGNFlagRegister(E);
                 SetZEROFlagRegisters(E);
-                SetAUXILLAYCARRYFlagRegister( E, oldValue, 1);
+                SetAUXILLAYCARRYFlagRegister(E, oldValue, 1);
                 SetPARITYFlagRegister(E);
                 break;
             }
@@ -841,7 +839,7 @@ struct CPU
                 H++;
                 SetSIGNFlagRegister(H);
                 SetZEROFlagRegisters(H);
-                SetAUXILLAYCARRYFlagRegister( H, oldValue, 1);
+                SetAUXILLAYCARRYFlagRegister(H, oldValue, 1);
                 SetPARITYFlagRegister(H);
                 break;
             }
@@ -851,7 +849,7 @@ struct CPU
                 L++;
                 SetSIGNFlagRegister(L);
                 SetZEROFlagRegisters(L);
-                SetAUXILLAYCARRYFlagRegister( L, oldValue, 1);
+                SetAUXILLAYCARRYFlagRegister(L, oldValue, 1);
                 SetPARITYFlagRegister(L);
                 break;
             }
@@ -884,11 +882,10 @@ struct CPU
                 A = A + A;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
-
             }
             case INSTRUCTIONS::ADD_B:
             {
@@ -896,11 +893,10 @@ struct CPU
                 A = A + B;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
-
             }
             case INSTRUCTIONS::ADD_C:
             {
@@ -908,11 +904,10 @@ struct CPU
                 A = A + C;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
-
             }
             case INSTRUCTIONS::ADD_D:
             {
@@ -920,11 +915,10 @@ struct CPU
                 A = A + D;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
-
             }
             case INSTRUCTIONS::ADD_E:
             {
@@ -932,11 +926,10 @@ struct CPU
                 A = A + E;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
-
             }
             case INSTRUCTIONS::ADD_H:
             {
@@ -944,11 +937,10 @@ struct CPU
                 A = A + H;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
-
             }
             case INSTRUCTIONS::ADD_L:
             {
@@ -956,11 +948,10 @@ struct CPU
                 A = A + L;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
-
             }
             case INSTRUCTIONS::ADD_M:
             {
@@ -969,11 +960,10 @@ struct CPU
                 A = A + memory[Address];
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
-
             }
             case INSTRUCTIONS::ADI_DATA:
             {
@@ -982,7 +972,7 @@ struct CPU
                 A = A + Data;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
@@ -993,7 +983,7 @@ struct CPU
                 A = A + A + flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
@@ -1004,7 +994,7 @@ struct CPU
                 A = A + B + flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
@@ -1015,7 +1005,7 @@ struct CPU
                 A = A + C + flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
@@ -1026,7 +1016,7 @@ struct CPU
                 A = A + D + flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
@@ -1037,7 +1027,7 @@ struct CPU
                 A = A + E + flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
@@ -1048,7 +1038,7 @@ struct CPU
                 A = A + H + flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
@@ -1059,7 +1049,7 @@ struct CPU
                 A = A + L + flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
@@ -1072,7 +1062,7 @@ struct CPU
                 A = A + Data + flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( A, oldValue, 0);
+                SetAUXILLAYCARRYFlagRegister(A, oldValue, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(oldValue, 0);
                 break;
@@ -1083,7 +1073,7 @@ struct CPU
                 A = A - A;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
@@ -1094,11 +1084,10 @@ struct CPU
                 A = A - B;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
-
             }
             case INSTRUCTIONS::SUB_C:
             {
@@ -1106,11 +1095,10 @@ struct CPU
                 A = A - C;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
-
             }
             case INSTRUCTIONS::SUB_D:
             {
@@ -1118,11 +1106,10 @@ struct CPU
                 A = A - D;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
-
             }
             case INSTRUCTIONS::SUB_E:
             {
@@ -1130,11 +1117,10 @@ struct CPU
                 A = A - E;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
-
             }
             case INSTRUCTIONS::SUB_H:
             {
@@ -1142,11 +1128,10 @@ struct CPU
                 A = A - H;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
-
             }
             case INSTRUCTIONS::SUB_L:
             {
@@ -1154,11 +1139,10 @@ struct CPU
                 A = A - L;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
-
             }
             case INSTRUCTIONS::SUB_M:
             {
@@ -1167,7 +1151,7 @@ struct CPU
                 A = A - memory[Address];
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
@@ -1179,7 +1163,7 @@ struct CPU
                 A = A - Data;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
@@ -1190,7 +1174,7 @@ struct CPU
                 A = A - A - flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
@@ -1201,7 +1185,7 @@ struct CPU
                 A = A - B - flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
@@ -1212,7 +1196,7 @@ struct CPU
                 A = A - C - flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
@@ -1223,7 +1207,7 @@ struct CPU
                 A = A - D - flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
@@ -1234,7 +1218,7 @@ struct CPU
                 A = A - E - flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
@@ -1245,7 +1229,7 @@ struct CPU
                 A = A - H - flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
@@ -1256,7 +1240,7 @@ struct CPU
                 A = A - L - flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
@@ -1269,7 +1253,7 @@ struct CPU
                 A = A - Data - flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
@@ -1281,7 +1265,7 @@ struct CPU
                 A = A - Data - flag.CY;
                 SetSIGNFlagRegister(A);
                 SetZEROFlagRegisters(A);
-                SetAUXILLAYCARRYFlagRegister( oldValue, A, 0);
+                SetAUXILLAYCARRYFlagRegister(oldValue, A, 0);
                 SetPARITYFlagRegister(A);
                 SetCARRYFlagRegister(A, 0);
                 break;
@@ -1294,5 +1278,4 @@ struct CPU
             }
         }
     }
-
 };
