@@ -25,7 +25,7 @@ struct INSTRUCTIONS
     static Byte constexpr MOV_B_H = 0x44;
     static Byte constexpr MOV_B_L = 0x45;
     static Byte constexpr MOV_B_M = 0x46;
-    
+
     static Byte constexpr MOV_C_A = 0x4F;
     static Byte constexpr MOV_C_B = 0x48;
     static Byte constexpr MOV_C_C = 0x49;
@@ -96,11 +96,11 @@ struct INSTRUCTIONS
     static Byte constexpr LXI_SP = 0x31;
 
     static Byte constexpr LDA_ADDRESS = 0x3A; //Load Accumulator Direct
-    
+
     static Byte constexpr LDAX_B = 0x0A; // Load Data of Address pointing by the BC register in Accumulator
     static Byte constexpr LDAX_D = 0x1A; // Load Data of Address pointing by the DE register in Accumulator
 
-    static Byte constexpr LHLD_ADDRESS = 0x2A; 
+    static Byte constexpr LHLD_ADDRESS = 0x2A;
 
     // STA Instruction
     static Byte constexpr STA_ADDRESS = 0x32;
@@ -142,7 +142,7 @@ struct INSTRUCTIONS
 
 
 // LOGICAL INSTRUCTIONS
-   
+
     // CMP Instruction
     static Byte constexpr CMP_A = 0xBF;
     static Byte constexpr CMP_B = 0xB8;
@@ -234,6 +234,5 @@ struct INSTRUCTIONS
     static Byte constexpr SBB_M = 0x9E;
 
     static Byte constexpr SBI_DATA = 0xDE;
-
 
 };
