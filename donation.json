@@ -1,15 +1,15 @@
 [
   {
-    "donorName": "Rahul Goswami",
+    "name": "Rahul Goswami",
     "amount": 5000,
     "details": "Donation for community events",
-    "businessName": "Goswami Traders"
+    "business": "Goswami Traders"
   },
   {
-    "donorName": "Sita Patel",
+    "name": "Sita Patel",
     "amount": 2000,
     "details": "Support for festival decorations",
-    "businessName": "Patel Enterprises"
+    "business": "Patel Enterprises"
   },
   {
     "name": "राजेश शर्मा",
