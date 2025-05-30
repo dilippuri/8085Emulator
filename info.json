@@ -1,10 +1,28 @@
 [
   {
-    "name": "Dilip Puri",
-    "position": "xyz",
+    "name": "अध्यक्ष",
+    "position": "अध्यक्ष",
     "phone": "9876543210",
-    "email": "dilippuri.github.io"
+    "email": "xyz.io"
   },
+  {
+    "name": "उप अध्यक्ष",
+    "position": "उप अध्यक्ष",
+    "phone": "9876543210",
+    "email": "xyz.io"
+  },
+  {
+    "name": "कोषाध्यक्ष",
+    "position": "कोषाध्यक्ष",
+    "phone": "9876543210",
+    "email": "xyz.io"
+  },
+  {
+    "name": "मेम्बर",
+    "position": "मेम्बर",
+    "phone": "9876543210",
+    "email": "xyz.io"
+  },  
   {
     "name": "समाज के मेम्बर लिस्ट ऐड हो रही है",
     "position": "समाज के मेम्बर लिस्ट ऐड हो रही है",
