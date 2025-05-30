@@ -2,19 +2,19 @@
   {
     "name": "Dilip Puri",
     "amount": 11111,
-    "details": "ऐप निर्माण",
+    "detail": "Additional help",
     "business": "Software Engineer, Intel"
   },
   {
     "name": "Eshwar Bharti",
     "amount": 1111,
-    "details": "ऐप निर्माण हेतु",
+    "detail": "ऐप निर्माण हेतु",
     "business": "Pooja Steel, Narsipattnam"
   },
   {
     "name": "Vishnu Bharti",
     "amount": 1111,
-    "details": "ऐप निर्माण हेतु",
+    "detail": "ऐप निर्माण हेतु",
     "business": "Bharti Metal Traders"
   },
   {
