@@ -1,26 +1,20 @@
 [
   {
-    "name": "Rahul Goswami",
-    "amount": 5000,
+    "name": "Eshwar Bharti",
+    "amount": 5100,
     "details": "Donation for community events",
-    "business": "Goswami Traders"
+    "business": "Pooja Steel, Narsipattnam"
   },
   {
-    "name": "Sita Patel",
-    "amount": 2000,
+    "name": "Vishnu Bharti",
+    "amount": 5100,
     "details": "Support for festival decorations",
-    "business": "Patel Enterprises"
+    "business": "Bharti Metal Traders"
   },
   {
-    "name": "राजेश शर्मा",
-    "amount": 5000,
+    "name": "Kamlesh Bharti",
+    "amount": 5100,
     "detail": "समाज के लिए विशेष दान",
-    "business": "शर्मा ट्रेडर्स"
-  },
-  {
-    "name": "अजय सिंह",
-    "amount": 7000,
-    "detail": "विशेष सहयोग",
-    "business": "सिंह इलेक्ट्रॉनिक्स"
+    "business": "Raksha Steel Kakinada"
   }
 ]
