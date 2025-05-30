@@ -7,24 +7,24 @@
     "city": "Sanchore"
   },
   {
-    "name": "JSK",
-    "contact": "+919460793983",
-    "state": "Gujarat",
-    "district": "Palanpur",
-    "city": "Deesa"
-  },
-  {
-    "name": "D D",
-    "contact": "+919460793983",
+    "name": "Ishwar Bharti",
+    "contact": "+918297301839",
     "state": "Rajasthan",
     "district": "Jalore",
-    "city": "Paladi"
+    "city": "Kesuri"
   },
   {
-    "name": "D P",
-    "contact": "+91-9460793983",
-    "state": "Gujarat",
-    "district": "Banaskantha",
-    "city": "Thrad"
+    "name": "Vishnu Bharti",
+    "contact": "+918905109475",
+    "state": "Rajasthan",
+    "district": "Jalore",
+    "city": "Kesuri"
+  },
+  {
+    "name": "Kamlesh Bharti",
+    "contact": "+918239968118",
+    "state": "Rajasthan",
+    "district": "Jalore",
+    "city": "Kesuri"
   }
 ]
