@@ -1,0 +1,26 @@
+[
+  {
+    "donorName": "Rahul Goswami",
+    "amount": 5000,
+    "details": "Donation for community events",
+    "businessName": "Goswami Traders"
+  },
+  {
+    "donorName": "Sita Patel",
+    "amount": 2000,
+    "details": "Support for festival decorations",
+    "businessName": "Patel Enterprises"
+  },
+  {
+    "name": "राजेश शर्मा",
+    "amount": 5000,
+    "detail": "समाज के लिए विशेष दान",
+    "business": "शर्मा ट्रेडर्स"
+  },
+  {
+    "name": "अजय सिंह",
+    "amount": 7000,
+    "detail": "विशेष सहयोग",
+    "business": "सिंह इलेक्ट्रॉनिक्स"
+  }
+]
