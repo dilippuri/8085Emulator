@@ -4,7 +4,14 @@
     "contact": "+919460793983",
     "state": "Rajasthan",
     "district": "Jalore",
-    "city": "Sanchore"
+    "city": "Paladi"
+  },
+  {
+    "name": "Sarvan Puri",
+    "contact": "+919024675841",
+    "state": "Rajasthan",
+    "district": "Jalore",
+    "city": "Paladi"
   },
   {
     "name": "Ishwar Bharti",
@@ -26,5 +33,33 @@
     "state": "Rajasthan",
     "district": "Jalore",
     "city": "Kesuri"
+  },
+  {
+    "name": "Vasan Bharti",
+    "contact": "+917227818576",
+    "state": "Rajasthan",
+    "district": "Jalore",
+    "city": "Kesuri"
+  },
+  {
+    "name": "Magan Bharti",
+    "contact": "+918297524481",
+    "state": "Rajasthan",
+    "district": "Jalore",
+    "city": "Kesuri"
+  },
+  {
+    "name": "Nakalng Bharti",
+    "contact": "+918690304236",
+    "state": "Rajasthan",
+    "district": "Jalore",
+    "city": "Kesuri"
+  },
+  {
+    "name": "Dhirendra Puri",
+    "contact": "+917231909105",
+    "state": "Rajasthan",
+    "district": "Jalore",
+    "city": "Hadecha"
   }
 ]
